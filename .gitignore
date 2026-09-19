@@ -1,0 +1,9 @@
+/node_modules/
+
+# secrets - never commit the real one, only .env.example
+.env
+
+# editors / macOS
+.idea/
+.vscode/
+.DS_Store

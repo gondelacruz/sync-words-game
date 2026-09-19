@@ -1,10 +1,11 @@
 services:
   - type: web
-    name: sync-words
+    name: sync-words          # <-- this sets your URL: https://<name>.onrender.com
     runtime: node
     plan: free
     buildCommand: npm install
     startCommand: npm start
+    healthCheckPath: /healthz
     envVars:
       - key: SPOTIFY_CLIENT_ID
-        sync: false
+        sync: false           # prompted for on first deploy, never stored in git
