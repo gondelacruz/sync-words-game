@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: sync-words
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: SPOTIFY_CLIENT_ID
+        sync: false
