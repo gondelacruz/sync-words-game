@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: sync-words          # <-- this sets your URL: https://<name>.onrender.com
+    name: sync-lyrics          # <-- this sets your URL: https://<name>.onrender.com
     runtime: node
     plan: free
     buildCommand: npm install
