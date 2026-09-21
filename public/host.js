@@ -236,9 +236,7 @@ function render() {
   el.codeBox.innerHTML = [...state.code].map((c) => `<span class="digit">${c}</span>`).join('');
   el.joinUrl.textContent = location.host;
   el.playersChip.textContent = `${state.players.length} singer${state.players.length === 1 ? '' : 's'}`;
-  el.armWinAt.textContent = state.settings.winAt;
-  el.lang.value = state.settings.lang;
-  el.winAt.value = String(state.settings.winAt);
+  el.armWinAt.textContent = state.settings.winAt;  el.winAt.value = String(state.settings.winAt);
 
   const slots = Math.max(2, state.players.length);
   el.lobbyPlayers.innerHTML = Array.from({ length: slots }, (_, i) => {
