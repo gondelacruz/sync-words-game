@@ -41,6 +41,8 @@ let detectedLanguage = 'en-US';
 let alive = false;
 let transcriptionInProgress = false;
 
+el.armBtn.addEventListener('click', arm);
+
 function buildRecogniser() {
   // Setup done in arm(); this function is called but mostly empty for compatibility
   return {
