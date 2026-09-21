@@ -85,9 +85,33 @@ async function transcribeChunk(audioBlob) {
 
 async function arm() {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: true },
-    });
+    // Check if permission is already granted
+    let hasPermission = false;
+    try {
+      const result = await navigator.permissions.query({ name: 'microphone' });
+      hasPermission = result.state === 'granted';
+    } catch (e) {
+      // Permissions API not supported; proceed with getUserMedia
+    }
+
+    let stream;
+    if (hasPermission) {
+      // Permission already granted; use it directly without prompt
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: true },
+      });
+    } else {
+      // First time; request permission with timeout to prevent hanging
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: true },
+        });
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
 
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
@@ -127,6 +151,8 @@ async function arm() {
   } catch (error) {
     const msg = error.name === 'NotAllowedError'
       ? 'Microphone permission denied.'
+      : error.name === 'AbortError'
+      ? 'Microphone permission request timed out. Try again.'
       : 'Microphone error: ' + error.message;
     el.micErr.textContent = msg;
     net?.send({ t: 'player:mic', ok: false, engine: 'groq-blocked' });

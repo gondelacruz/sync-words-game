@@ -286,6 +286,7 @@ function renderArmed() {
   const ready = state.players.filter((p) => p.micOk).length;
   el.readyCount.textContent = `${ready} / ${state.players.length}`;
   el.goBtn.disabled = state.players.length === 0 || (!MANUAL && !sp.playerReady());
+  el.backBtn.disabled = !t.name; // Disable if no track loaded
 }
 
 function renderLive() {
