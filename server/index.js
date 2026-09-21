@@ -10,9 +10,9 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
   createRoom, getRoom, addPlayer, armTrack, beginCountdown, lockWindow,
-  hear, finishRound, resetForNext, resetMatch, snapshot, startTicker, COUNTDOWN,
+  hear, hearClip, finishRound, resetForNext, resetMatch, snapshot, startTicker, COUNTDOWN,
 } from './rooms.js';
-import { detectLanguage } from './lyrics.js';
+import { transcribe, sttEnabled } from './stt.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 3000;
@@ -25,6 +25,9 @@ app.get('/api/config', (_req, res) => {
   res.json({
     spotifyClientId: process.env.SPOTIFY_CLIENT_ID || '',
     configured: Boolean(process.env.SPOTIFY_CLIENT_ID),
+    // 'groq' = phones record clips and the server transcribes them;
+    // 'browser' = phones use the browser's own speech recognition.
+    stt: sttEnabled() ? 'groq' : 'browser',
   });
 });
 
@@ -34,46 +37,36 @@ app.get('/api/room/:code', (req, res) => {
   res.json({ ok: true, phase: room.phase, players: room.players.size });
 });
 
-app.use(express.json({ limit: '10mb' }));
+// A phone uploads one short audio clip. Only accepted from a real player in a
+// room that is live right now, so nobody can burn the Groq quota from outside.
+app.post('/api/transcribe',
+  express.raw({ type: () => true, limit: '4mb' }),
+  async (req, res) => {
+    const room = getRoom(req.query.code);
+    const player = room?.players.get(String(req.query.pid || ''));
+    const roundNo = Number(req.query.round);
+    const seq = Number(req.query.seq);
+    if (!room || !player) return res.status(404).json({ ok: false, reason: 'no-player' });
+    if (room.phase !== 'live' || roundNo !== room.roundNo) return res.json({ ok: false, reason: 'not-live' });
+    if (!Buffer.isBuffer(req.body) || req.body.length < 200 || !Number.isFinite(seq)) {
+      return res.status(400).json({ ok: false, reason: 'bad-clip' });
+    }
 
-app.post('/api/transcribe', async (req, res) => {
-  try {
-    const { audio, language } = req.body;
-    
-    if (!audio || !Buffer.isBuffer(Buffer.from(audio, 'base64'))) {
-      return res.status(400).json({ error: 'Invalid audio data' });
+    let text = '';
+    try {
+      const iso = String(room.settings.lang || 'en').slice(0, 2);
+      text = await transcribe(req.body, String(req.headers['content-type'] || ''), iso);
+    } catch (e) {
+      console.warn('[stt]', e.message);
+      return res.status(502).json({ ok: false, reason: 'stt-failed' });
     }
-    
-    const audioBuffer = Buffer.from(audio, 'base64');
-    const lang = language || 'en-US';
-    
-    // Call Groq Whisper API
-    const formData = new FormData();
-    formData.append('file', new Blob([audioBuffer], { type: 'audio/wav' }), 'audio.wav');
-    formData.append('model', 'whisper-large-v3-turbo');
-    formData.append('language', lang.split('-')[0]); // Convert 'es-ES' to 'es'
-    
-    const response = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
-      },
-      body: formData,
-    });
-    
-    if (!response.ok) {
-      const err = await response.text();
-      console.error('Groq error:', err);
-      return res.status(500).json({ error: 'Transcription failed' });
+
+    if (hearClip(room, player, roundNo, seq, text)) {
+      send(player.socket, { t: 'you', percent: player.live.percent, hits: player.live.hits, phrase: player.live.phrase, matched: player.live.matched.slice(-28) });
+      push(room);
     }
-    
-    const result = await response.json();
-    res.json({ text: result.text || '' });
-  } catch (error) {
-    console.error('Transcription error:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
+    res.json({ ok: true, text });
+  });
 
 app.get('/healthz', (_req, res) => res.type('text').send('ok'));
 
@@ -254,6 +247,7 @@ setInterval(() => {
 
 server.listen(PORT, () => {
   console.log(`\n  SYNC  ->  http://127.0.0.1:${PORT}\n`);
+  console.log(`  speech-to-text: ${sttEnabled() ? 'Groq Whisper' : 'browser (no GROQ_API_KEY set)'}\n`);
   if (!process.env.SPOTIFY_CLIENT_ID) {
     console.log('  (no SPOTIFY_CLIENT_ID set — see .env.example)\n');
   }

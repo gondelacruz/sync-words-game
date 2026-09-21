@@ -10,6 +10,7 @@
 import { randomUUID } from 'node:crypto';
 import { findLyrics, buildTimeline, targetSoFar } from './lyrics.js';
 import { score, missed, tokenize } from './scoring.js';
+import { detectLanguage } from './lang.js';
 
 const tokensOf = (t) => tokenize(t);
 
@@ -118,6 +119,8 @@ export async function armTrack(room, track) {
   }
 
   room.lyrics = lyrics;
+  // Sing in whatever language the song is in: no setting for the host to get wrong.
+  room.settings.lang = detectLanguage(lyrics.lines.map((l) => l.text).join('\n')).bcp47;
   // The round is the track, top to tail. Fall back to the lyric sheet's own
   // duration when the source did not give us one (manual mode), and cap it so
   // a bad number cannot leave a room stuck live forever.
@@ -134,6 +137,7 @@ export function beginCountdown(room) {
   room.lastResult = null;
   for (const p of room.players.values()) {
     p.heard = '';
+    p.clips = new Map();
     p.live = { percent: 0, hits: 0, total: 0, phrase: 0, matched: [] };
   }
   room.round = {
@@ -170,6 +174,18 @@ export function lockWindow(room, positionMs, onEnd) {
 /** Where the needle is right now, in track time. */
 function playhead(room) {
   return room.round.fromMs + (now() - room.round.startedAt);
+}
+
+/**
+ * One transcribed clip from a phone (Groq path). Clips can finish out of order,
+ * so they are kept by sequence number and re-joined in order every time.
+ */
+export function hearClip(room, player, roundNo, seq, text) {
+  if (room.phase !== 'live' || roundNo !== room.roundNo) return false;
+  if (!player.clips) player.clips = new Map();
+  player.clips.set(seq, String(text || ''));
+  const joined = [...player.clips.entries()].sort((a, b) => a[0] - b[0]).map((e) => e[1]).join(' ');
+  return hear(room, player, joined);
 }
 
 export function hear(room, player, text) {

@@ -29,6 +29,11 @@ const el = {
 // Manual mode: no Spotify at all. You play the song from wherever you like and
 // SYNC just runs the clock. Lyrics still come from LRCLIB.
 const MANUAL = new URLSearchParams(location.search).has('manual');
+const LANG_NAMES = {
+  'en-US': 'English', 'es-ES': 'Spanish', 'pt-BR': 'Portuguese', 'fr-FR': 'French',
+  'de-DE': 'German', 'it-IT': 'Italian', 'zh-CN': 'Chinese', 'ja-JP': 'Japanese',
+  'ko-KR': 'Korean', 'ru-RU': 'Russian', 'ar-SA': 'Arabic',
+};
 
 let clientId = '';
 let state = null;
@@ -256,6 +261,14 @@ function render() {
     : 'lobby';
   for (const [k, node] of Object.entries(el.views)) node.classList.toggle('hide', k !== view);
 
+  // Back at song search after a round or "Pick another song": start clean.
+  if (view === 'lobby' && lastPhase && lastPhase !== 'lobby' && lastPhase !== 'loading') {
+    el.q.value = '';
+    el.results.innerHTML = '';
+    el.searchHint.classList.remove('hide');
+    el.searchHint.textContent = 'Type a title. Famous choruses work best.';
+  }
+
   if (phase === 'loading') {
     el.searchHint.classList.remove('hide');
     el.searchHint.textContent = 'Finding the lyrics…';
@@ -282,6 +295,7 @@ function renderArmed() {
   el.armWindow.textContent = MANUAL
     ? `Start the track from the top on SING - the whole song, ${mmss(state.roundMs)}, ${state.lineCount} lines`
     : `The whole song - ${mmss(state.roundMs)}, ${state.lineCount} lines of lyrics`;
+  el.armWindow.textContent += ` · sung in ${LANG_NAMES[state.settings.lang] || state.settings.lang}`;
   const ready = state.players.filter((p) => p.micOk).length;
   el.readyCount.textContent = `${ready} / ${state.players.length}`;
   el.goBtn.disabled = state.players.length === 0 || (!MANUAL && !sp.playerReady());

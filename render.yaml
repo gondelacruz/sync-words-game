@@ -9,3 +9,5 @@ services:
     envVars:
       - key: SPOTIFY_CLIENT_ID
         sync: false           # prompted for on first deploy, never stored in git
+      - key: GROQ_API_KEY
+        sync: false           # speech-to-text; add the value in the Render dashboard
