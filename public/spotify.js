@@ -135,7 +135,7 @@ export function playerReady() { return Boolean(deviceId); }
 export function createPlayer(clientId, { onReady, onState, onError } = {}) {
   const boot = () => {
     player = new Spotify.Player({
-      name: 'SYNC',
+      name: 'SYNG',
       volume: 0.85,
       getOAuthToken: (cb) => token(clientId).then((t) => t && cb(t)),
     });

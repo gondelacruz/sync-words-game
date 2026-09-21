@@ -1,22 +1,22 @@
-# SYNC
+# SYNG
 
-A two-player sing-off. The laptop plays a famous song out loud, start to finish.
-Both players hold their phones to their mouths and sing the whole thing. Whoever
-gets more of the real lyrics out — judged by the phone's own speech recognition —
-takes the point.
+A karaoke sing-off for up to **four teams**. The laptop plays a famous song out
+loud, start to finish. Each team has one phone and a list of members; one singer
+per team holds the phone to their mouth and sings the whole thing. The server
+transcribes every phone (Groq Whisper) and scores it against the real lyrics.
 
-Nobody types anything. Nobody scores it by hand. The bars race in real time and
-one of them wins.
+**Two modes**
 
-```
-  laptop (host screen)          phone            phone
-  ├─ Spotify playback           ├─ mic           ├─ mic
-  ├─ join code: 7KQ2            └─ speech→text   └─ speech→text
-  └─ live scoreboard                  └────── words ──────┘
-                                              ↓
-                              server compares them to the lyrics
-                                  that were actually playing
-```
+- **Random hits** — three famous songs from the languages the host ticked
+  (English by default, saved on the laptop). Teams take turns choosing one on
+  their phone; one singer per team is drawn at random, and everyone gets a turn
+  before anyone sings twice.
+- **Game master** — the host searches every song and picks who sings for each
+  team, or lets the dice decide.
+
+The host picks 1–30 rounds. Each round, you score one point for every team you
+beat (3 / 2 / 1 / 0 with four teams). Most points at the end wins, and **Play
+again** keeps the same teams.
 
 ---
 

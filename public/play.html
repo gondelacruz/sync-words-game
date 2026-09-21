@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#08070c">
-<title>SYNC</title>
+<title>SYNG</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ffe600'/><text y='.9em' x='50' text-anchor='middle' font-size='78' font-family='Impact,sans-serif' fill='%2308070c'>S</text></svg>">
 <link rel="stylesheet" href="/style.css">
 </head>
@@ -12,52 +12,102 @@
 <main class="stage phone">
 
   <header class="row" style="justify-content:space-between;flex:0 0 auto">
-    <div class="brand" style="font-size:22px">SY<em>N</em>C</div>
+    <div class="brand" style="font-size:22px">SYN<em>G</em></div>
     <div class="row" style="gap:8px">
       <span id="roomChip" class="chip">—</span>
-      <span id="ptsChip" class="chip hot">0</span>
+      <span id="ptsChip" class="chip hot">0 pts</span>
     </div>
   </header>
 
-  <!-- ARM MIC -->
-  <section id="armMic" class="stack center" style="flex:1 1 auto;justify-content:center;gap:22px">
-    <div class="d2" id="hiName">—</div>
-    <p class="muted" style="max-width:28ch;margin:0 auto;font-size:15px;line-height:1.6">
-      Tap once to hand over the microphone. Then hold the phone close to your mouth and
-      <span class="acid">sing loud</span>.
-    </p>
-    <button id="armBtn" class="primary huge">Arm my mic</button>
-    <div id="micErr" class="label" style="color:var(--p1);max-width:30ch;margin:0 auto"></div>
+  <!-- TEAM SETUP (before the game starts) -->
+  <section id="scrTeam" class="stack scroll" style="flex:1 1 auto;gap:16px">
+    <div class="label">Your team</div>
+    <input id="teamName" maxlength="18" placeholder="Team name" autocomplete="off" style="font-family:var(--display);font-size:28px;text-transform:uppercase">
+    <div class="label">Who's in it? <span id="memberCount" class="acid"></span></div>
+    <div id="memberList" class="memberList"></div>
+    <form id="addForm" class="row" style="gap:8px;flex-wrap:nowrap">
+      <input id="newMember" maxlength="20" placeholder="Add a name" autocomplete="off" enterkeyhint="done">
+      <button class="primary" type="submit" style="padding:14px 18px">Add</button>
+    </form>
+    <div id="teamErr" class="label" style="color:var(--p1);min-height:1.2em"></div>
+    <div class="grow"></div>
+    <div id="micBox" class="stack center" style="gap:10px">
+      <button id="armBtn" class="primary huge">Arm the mic</button>
+      <div id="micOkLine" class="mic hide"><span class="ring on"></span><span class="label">Mic armed · waiting for the host to start</span></div>
+      <div id="micErr" class="label" style="color:var(--p1);max-width:30ch;margin:0 auto"></div>
+    </div>
   </section>
 
-  <!-- WAITING -->
-  <section id="waiting" class="stack center hide" style="flex:1 1 auto;justify-content:center;gap:18px">
-    <div class="mic"><span class="ring on"></span><span class="label">Mic live</span></div>
+  <!-- ARM MIC (joined mid-game or lost it) -->
+  <section id="scrArm" class="stack center hide" style="flex:1 1 auto;justify-content:center;gap:22px">
+    <div class="d2" id="armTeam">—</div>
+    <p class="muted" style="max-width:28ch;margin:0 auto;font-size:15px;line-height:1.6">
+      Tap once to hand over the microphone.
+    </p>
+    <button id="armBtn2" class="primary huge">Arm the mic</button>
+    <div id="micErr2" class="label" style="color:var(--p1);max-width:30ch;margin:0 auto"></div>
+  </section>
+
+  <!-- CHOOSING (random mode) -->
+  <section id="scrChoose" class="stack center hide" style="flex:1 1 auto;justify-content:center;gap:16px">
+    <div class="label">Round <span class="rNo">1</span> of <span class="rOf">5</span></div>
+    <div class="d2" id="chooseTitle">Your pick!</div>
+    <div class="muted" id="chooseSub" style="font-size:15px">Choose the song everyone sings</div>
+    <div id="chooseList" class="stack" style="gap:10px;width:100%"></div>
+  </section>
+
+  <!-- WAITING (host picking / generic) -->
+  <section id="scrWait" class="stack center hide" style="flex:1 1 auto;justify-content:center;gap:18px">
+    <div class="mic"><span class="ring on"></span><span class="label">Mic armed</span></div>
     <div class="d2" id="waitTitle">Waiting for the host</div>
     <div class="muted" id="waitSub" style="font-size:15px">Look at the big screen.</div>
     <div id="board" class="stack" style="gap:6px;width:min(340px,90vw);margin:10px auto 0"></div>
   </section>
 
+  <!-- SINGER ANNOUNCED -->
+  <section id="scrAnnounce" class="stack center hide" style="flex:1 1 auto;justify-content:center;gap:14px">
+    <div class="label">Round <span class="rNo">1</span> · your singer is</div>
+    <div class="singerBig" id="singerName">—</div>
+    <div class="d3 muted" id="annSong">—</div>
+    <p class="muted" style="max-width:30ch;margin:8px auto 0;font-size:15px;line-height:1.6">
+      Hand them this phone. Hold it close to your mouth and <span class="acid">sing loud</span>.
+    </p>
+  </section>
+
   <!-- SINGING -->
-  <section id="singing" class="stack hide" style="flex:1 1 auto;min-height:0;gap:14px">
+  <section id="scrSing" class="stack hide" style="flex:1 1 auto;min-height:0;gap:14px">
     <div class="row" style="justify-content:space-between;align-items:baseline">
-      <span class="label">Sing!</span>
+      <span class="label" id="singWho">Sing!</span>
       <span class="d3 acid" id="pClock" style="font-variant-numeric:tabular-nums">0:00</span>
     </div>
-    <div class="bigmeter" id="meter" style="flex:0 0 34vh">
+    <div class="bigmeter" id="meter">
       <div class="fill" id="meterFill"></div>
       <div class="num" id="meterNum">0</div>
     </div>
-    <div id="wordsHint" class="label center">Nothing heard yet — get the phone to your mouth</div>
-    <div id="words" class="words scroll"></div>
+    <div class="label center" id="singHint">Keep the phone close to your mouth</div>
+  </section>
+
+  <!-- SCORING -->
+  <section id="scrScoring" class="stack center hide" style="flex:1 1 auto;justify-content:center;gap:16px">
+    <div class="d2">Counting every word…</div>
+    <div class="muted" style="font-size:15px">Hang on a second</div>
   </section>
 
   <!-- RESULT -->
-  <section id="result" class="stack center hide" style="flex:1 1 auto;justify-content:center;gap:16px">
+  <section id="scrResult" class="stack center hide" style="flex:1 1 auto;justify-content:center;gap:16px">
     <div id="resStamp" class="stamp" style="align-self:center">—</div>
     <div class="d2" id="resPct">0%</div>
+    <div class="d3" id="resGain">+0</div>
     <div class="label" id="resDetail">—</div>
-    <div class="muted" style="font-size:14px">Waiting for the next song…</div>
+    <div class="muted" style="font-size:14px">Look at the big screen for the lyrics</div>
+  </section>
+
+  <!-- FINAL -->
+  <section id="scrFinal" class="stack center hide" style="flex:1 1 auto;justify-content:center;gap:16px">
+    <div class="label">Game over</div>
+    <div id="finStamp" class="stamp" style="align-self:center">—</div>
+    <div class="d3" id="finPts">0 points</div>
+    <div class="muted" style="font-size:14px">The host can start another game with the same teams</div>
   </section>
 </main>
 <script type="module" src="/play.js"></script>

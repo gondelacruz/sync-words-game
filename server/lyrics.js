@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// SYNC — lyrics via LRCLIB (https://lrclib.net), a free, key-less, community
+// SYNG — lyrics via LRCLIB (https://lrclib.net), a free, key-less, community
 // database of time-synced lyrics. We only ever want the *synced* kind: knowing
 // which words are playing right now is the whole game.
 // ---------------------------------------------------------------------------
@@ -9,7 +9,11 @@ import { tokenize } from './scoring.js';
 
 const UA = 'sync-words/1.0.0 (https://github.com/sync-words)';
 const BASE = 'https://lrclib.net/api';
-const cache = new Map();          // key -> parsed lyrics (or null)
+const cache = new Map();
+
+/** For comparing titles: accents, brackets and punctuation removed. */
+const simplify = (t) => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .replace(/\(.*?\)|\[.*?\]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();          // key -> parsed lyrics (or null)
 const TTL = 1000 * 60 * 60 * 6;
 
 async function get(path, params) {
@@ -73,22 +77,37 @@ export async function findLyrics({ title, artist, album, durationMs }) {
   if (hit && Date.now() - hit.at < TTL) return hit.value;
 
   let value = null;
-  try {
-    value = pack(await get('/get', {
-      track_name: title,
-      artist_name: artist,
-      album_name: album,
-      duration: Math.round((durationMs || 0) / 1000),
-    }));
-  } catch { /* fall through to search */ }
+  const target = Math.round((durationMs || 0) / 1000);
+
+  // The exact lookup needs a duration; Random-mode songs come without one.
+  if (target > 0) {
+    try {
+      value = pack(await get('/get', {
+        track_name: title,
+        artist_name: artist,
+        album_name: album,
+        duration: target,
+      }));
+    } catch { /* fall through to search */ }
+  }
 
   if (!value) {
     try {
       const results = (await get('/search', { track_name: title, artist_name: artist })) || [];
-      const target = Math.round((durationMs || 0) / 1000);
-      const ranked = results
-        .filter((r) => r.syncedLyrics && !r.instrumental)
-        .sort((a, b) => Math.abs((a.duration || 0) - target) - Math.abs((b.duration || 0) - target));
+      let ranked = results.filter((r) => r.syncedLyrics && !r.instrumental);
+      if (target > 0) {
+        ranked.sort((a, b) => Math.abs((a.duration || 0) - target) - Math.abs((b.duration || 0) - target));
+      } else {
+        // No duration to aim for: keep entries that really are this song (not a
+        // remix or a live cut with a longer name), then take the median length,
+        // which is the studio version far more often than the extremes.
+        const want = simplify(title);
+        const exact = ranked.filter((r) => simplify(r.trackName) === want);
+        if (exact.length) ranked = exact;
+        ranked.sort((a, b) => (a.duration || 0) - (b.duration || 0));
+        const mid = Math.floor((ranked.length - 1) / 2);
+        ranked = [ranked[mid], ...ranked.slice(0, mid), ...ranked.slice(mid + 1)].filter(Boolean);
+      }
       for (const r of ranked) {
         value = pack(r);
         if (value) break;

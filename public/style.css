@@ -1,5 +1,5 @@
 /* ===========================================================================
-   SYNC — arcade sing-off. Dark, loud, high contrast, zero rounded pastel.
+   SYNG — arcade sing-off. Dark, loud, high contrast, zero rounded pastel.
    =========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&display=swap');
@@ -267,3 +267,143 @@ input::placeholder { color: #4b4660; }
 #revLyrics div { padding: 2px 0; }
 
 .stamp { margin: clamp(14px, 2vmin, 30px) 0 clamp(6px, 1vmin, 14px); }
+
+/* ===========================================================================
+   Teams, modes, rounds
+   =========================================================================== */
+
+/* --- setup ---------------------------------------------------------------- */
+.teamSlots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.tslot {
+  border: 2px dashed var(--line); padding: 12px 14px; min-height: 120px;
+  display: flex; flex-direction: column; gap: 6px; min-width: 0;
+}
+.tslot.filled { border-style: solid; border-color: var(--c); background: color-mix(in srgb, var(--c) 8%, transparent); }
+.tslot.dim { opacity: .45; }
+.tslot .tn { font-family: var(--display); font-size: clamp(20px, 2.8vmin, 38px); line-height: 1; text-transform: uppercase; overflow-wrap: anywhere; }
+.tslot .tm { font-size: 13px; line-height: 1.4; color: rgba(255,255,255,.8); max-height: 4.2em; overflow: hidden; }
+.kick { border: 0; padding: 2px 6px; font-size: 12px; color: var(--mute); letter-spacing: 0; }
+.kick:hover { background: var(--p1); color: var(--ink); }
+
+.settings {
+  display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: clamp(14px, 2.6vmin, 32px);
+  padding: clamp(14px, 2.4vmin, 26px); align-items: stretch;
+}
+.modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mode {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 8px; text-align: left;
+  border-color: var(--line); color: var(--white); padding: 14px 16px; letter-spacing: 0; text-transform: none;
+}
+.mode .mt { font-family: var(--display); font-size: clamp(20px, 2.8vmin, 34px); text-transform: uppercase; letter-spacing: .02em; line-height: 1; }
+.mode .md { font-size: 13px; font-weight: 500; line-height: 1.45; color: var(--mute); }
+.mode:hover { background: var(--ink-2); color: var(--white); border-color: var(--white); }
+.mode.on { border-color: var(--acid); background: color-mix(in srgb, var(--acid) 12%, transparent); }
+.mode.on .mt { color: var(--acid); }
+
+.stepper { display: flex; align-items: stretch; }
+.stepper button { padding: 10px 18px; font-size: 22px; letter-spacing: 0; border-color: var(--line); }
+.stepper input { text-align: center; font-family: var(--display); font-size: 30px; padding: 6px; width: 5ch; flex: 1 1 auto; border-left: 0; border-right: 0; -moz-appearance: textfield; }
+.stepper input::-webkit-outer-spin-button, .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.dd { position: relative; }
+.dd summary {
+  list-style: none; cursor: pointer; border: 2px solid var(--line); background: var(--ink-2);
+  padding: 12px 40px 12px 14px; font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dd summary::-webkit-details-marker { display: none; }
+.dd summary::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--acid); }
+.dd[open] summary { border-color: var(--acid); }
+.ddmenu {
+  position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 50;
+  background: var(--ink-2); border: 2px solid var(--acid); padding: 6px; display: flex; flex-direction: column;
+}
+.ddopt { display: flex; align-items: center; gap: 12px; padding: 10px 10px; cursor: pointer; font-weight: 700; }
+.ddopt:hover { background: var(--line); }
+.ddopt input { width: 20px; height: 20px; accent-color: var(--acid); padding: 0; flex: 0 0 auto; }
+
+/* --- choosing --------------------------------------------------------------- */
+.optionCards { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(10px, 2vmin, 24px); }
+.optCard {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 8px; text-align: left;
+  border: 3px solid var(--c); background: color-mix(in srgb, var(--c) 10%, var(--ink-2));
+  padding: clamp(14px, 2.6vmin, 30px); letter-spacing: 0; text-transform: none; min-height: 0;
+  animation: slideUp .45s cubic-bezier(.2,1.2,.35,1) both;
+}
+.optCard:nth-child(2) { animation-delay: .08s; }
+.optCard:nth-child(3) { animation-delay: .16s; }
+.optCard:hover { background: var(--c); color: var(--ink); }
+.optCard:hover .oArtist, .optCard:hover .oYear { color: var(--ink); }
+.optCard .oYear { font-size: 13px; font-weight: 700; letter-spacing: .24em; color: var(--c); }
+.optCard .oTitle { font-family: var(--display); font-size: clamp(24px, 4.2vmin, 56px); line-height: .95; text-transform: uppercase; overflow-wrap: anywhere; }
+.optCard .oArtist { font-size: clamp(13px, 1.8vmin, 20px); font-weight: 700; color: rgba(255,255,255,.8); }
+.optCard.picked { background: var(--c); color: var(--ink); }
+.optCard[disabled] { opacity: .75; cursor: default; }
+.optCard[disabled]:hover { background: color-mix(in srgb, var(--c) 10%, var(--ink-2)); color: var(--white); }
+.optCard.picked[disabled] { opacity: 1; background: var(--c); color: var(--ink); }
+.phoneOpt { width: 100%; }
+.phoneOpt .oTitle { font-size: 28px; }
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* --- game master: singers ------------------------------------------------------ */
+.singerCols { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; flex: 1 1 auto; min-height: 0; overflow: auto; }
+.scol { border: 2px solid var(--c); padding: 14px; display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+.scol .tn { font-family: var(--display); font-size: clamp(20px, 3vmin, 36px); text-transform: uppercase; line-height: 1; }
+.members { display: flex; flex-wrap: wrap; gap: 8px; overflow: auto; }
+.member { padding: 10px 14px; font-size: 14px; letter-spacing: .04em; text-transform: none; border-color: var(--line); color: var(--white); }
+.member:hover { border-color: var(--c); background: transparent; color: var(--white); }
+.member.on { background: var(--c); border-color: var(--c); color: var(--ink); }
+
+/* --- armed ------------------------------------------------------------------- */
+.lineup { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+.lu { border: 2px solid var(--c); padding: 12px 18px; min-width: 180px; display: flex; flex-direction: column; gap: 4px; align-items: center; }
+.luName { font-family: var(--display); font-size: clamp(26px, 4.8vmin, 64px); line-height: 1; text-transform: uppercase; }
+
+/* --- live with 3 or 4 teams ----------------------------------------------------- */
+.arena.trio { grid-template-columns: repeat(3, 1fr); }
+.arena.quad { grid-template-columns: repeat(4, 1fr); }
+
+/* --- the singer announcement ---------------------------------------------------- */
+.announce { background: rgba(8,7,12,.94); gap: clamp(10px, 2vmin, 24px); cursor: pointer; }
+.annRows { display: flex; flex-direction: column; align-items: center; gap: clamp(4px, 1vmin, 12px); }
+.annRow {
+  display: flex; flex-direction: column; align-items: center; line-height: .9;
+  animation: annIn .6s cubic-bezier(.2,1.6,.35,1) both;
+}
+.annTeam { font-weight: 700; letter-spacing: .3em; text-transform: uppercase; color: var(--c); font-size: clamp(12px, 2vmin, 24px); }
+.annName {
+  font-family: var(--display); text-transform: uppercase; color: var(--white);
+  font-size: clamp(54px, 14vmin, 200px); line-height: .9;
+  text-shadow: .05em .05em 0 var(--c);
+}
+.annVs { font-family: var(--display); color: var(--acid); font-size: clamp(22px, 4vmin, 52px); animation: annIn .4s ease-out both; }
+@keyframes annIn {
+  0% { transform: scale(3.4) rotate(-10deg); opacity: 0; filter: blur(12px); }
+  70% { opacity: 1; filter: none; }
+  100% { transform: scale(1) rotate(-3deg); opacity: 1; }
+}
+
+/* --- final -------------------------------------------------------------------- */
+.standings { display: flex; flex-direction: column; gap: 8px; width: min(560px, 92vw); margin: 0 auto; }
+.stRow { display: flex; align-items: center; gap: 16px; border-left: 6px solid var(--c); background: var(--ink-2); padding: 10px 16px; text-align: left; }
+.stName { font-family: var(--display); font-size: clamp(20px, 3vmin, 36px); text-transform: uppercase; color: var(--c); }
+
+/* --- phone: team editor + singer ---------------------------------------------- */
+.memberList { display: flex; flex-wrap: wrap; gap: 8px; }
+.mchip { display: inline-flex; align-items: center; gap: 4px; border: 2px solid var(--c, var(--acid)); padding: 4px 4px 4px 12px; font-weight: 700; }
+.mchip button { border: 0; padding: 6px 8px; font-size: 12px; color: var(--mute); letter-spacing: 0; }
+.singerBig {
+  font-family: var(--display); text-transform: uppercase; line-height: .88;
+  font-size: clamp(64px, 22vw, 150px); color: var(--c, var(--acid)); overflow-wrap: anywhere;
+  animation: annIn .6s cubic-bezier(.2,1.6,.35,1) both;
+}
+#scrSing .bigmeter { flex: 1 1 auto; }
+
+@media (max-width: 900px) {
+  .settings { grid-template-columns: 1fr; }
+  .teamSlots { grid-template-columns: repeat(2, 1fr); }
+  .optionCards { grid-template-columns: 1fr; }
+  .arena.trio, .arena.quad { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 520px) {
+  .modes { grid-template-columns: 1fr; }
+}

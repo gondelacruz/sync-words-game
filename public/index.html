@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#08070c">
-<title>SYNC — sing-off</title>
+<title>SYNG — sing-off</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ffe600'/><text y='.9em' x='50' text-anchor='middle' font-size='78' font-family='Impact,sans-serif' fill='%2308070c'>S</text></svg>">
 <link rel="stylesheet" href="/style.css">
 </head>
@@ -12,11 +12,11 @@
 <main class="stage" style="justify-content:center;align-items:center;text-align:center;gap:clamp(18px,3vmin,40px)">
 
   <div>
-    <div class="label" style="margin-bottom:.7em">Two phones. One song. No mercy.</div>
-    <h1 class="d1" style="letter-spacing:.02em">SY<span class="acid">N</span>C</h1>
-    <p class="muted" style="max-width:34ch;margin:14px auto 0;font-size:15px;line-height:1.5">
-      The laptop plays a song. Everyone sings into their phone.
-      Whoever gets the most words right takes the point.
+    <div class="label" style="margin-bottom:.7em">Up to four teams. One song. No mercy.</div>
+    <h1 class="d1" style="letter-spacing:.02em">SYN<span class="acid">G</span></h1>
+    <p class="muted" style="max-width:36ch;margin:14px auto 0;font-size:15px;line-height:1.5">
+      The laptop plays a song. One singer from each team sings into the team's phone.
+      Most words right takes the points.
     </p>
   </div>
 
@@ -27,12 +27,12 @@
   </div>
 
   <form id="joinForm" class="panel stack" style="padding:22px;width:min(380px,92vw);gap:14px">
-    <div class="label">Singing? Enter the code</div>
+    <div class="label">One phone per team · enter the code</div>
     <input id="code" inputmode="text" autocapitalize="characters" autocomplete="off"
            maxlength="4" placeholder="XXXX"
            style="font-family:var(--display);font-size:44px;text-align:center;letter-spacing:.3em;padding:10px">
-    <input id="name" maxlength="14" placeholder="Your name" autocomplete="off">
-    <button class="primary" type="submit">Join the sing-off</button>
+    <input id="name" maxlength="18" placeholder="Team name" autocomplete="off">
+    <button class="primary" type="submit">Join with this team</button>
     <div id="err" class="label" style="color:var(--p1);min-height:1.2em"></div>
   </form>
 
@@ -42,7 +42,9 @@
 <script type="module">
   import { $ } from '/lib.js';
   const code = $('#code'), name = $('#name'), err = $('#err');
-  name.value = localStorage.getItem('sync:name') || '';
+  try { name.value = JSON.parse(localStorage.getItem('syng:team') || '""'); } catch {}
+  const note = new URLSearchParams(location.search).get('msg');
+  if (note) err.textContent = note;
   const pre = new URLSearchParams(location.search).get('code');
   if (pre) code.value = pre.toUpperCase();
   code.addEventListener('input', () => {
@@ -53,11 +55,14 @@
     e.preventDefault();
     const c = code.value.trim();
     if (c.length !== 4) return (err.textContent = 'Four characters');
-    if (!name.value.trim()) return (err.textContent = 'Need a name');
+    if (!name.value.trim()) return (err.textContent = 'Give your team a name');
     const res = await fetch('/api/room/' + c).catch(() => null);
     if (!res || !res.ok) return (err.textContent = 'No room with that code');
-    localStorage.setItem('sync:name', name.value.trim());
-    location.href = `/play.html?code=${c}&name=${encodeURIComponent(name.value.trim())}`;
+    const body = await res.json().catch(() => ({}));
+    if (body.phase && body.phase !== 'setup') return (err.textContent = 'That game has already started');
+    if (body.teams >= 4) return (err.textContent = 'That room already has four teams');
+    try { localStorage.setItem('syng:team', JSON.stringify(name.value.trim())); } catch {}
+    location.href = `/play.html?code=${c}&team=${encodeURIComponent(name.value.trim())}`;
   });
 </script>
 </body>

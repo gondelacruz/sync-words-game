@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#08070c">
-<title>SYNC — host</title>
+<title>SYNG — host</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ffe600'/><text y='.9em' x='50' text-anchor='middle' font-size='78' font-family='Impact,sans-serif' fill='%2308070c'>S</text></svg>">
 <link rel="stylesheet" href="/style.css">
 <script src="https://sdk.scdn.co/spotify-player.js"></script>
@@ -13,53 +13,116 @@
 <main class="stage">
 
   <header class="topbar">
-    <div class="brand">SY<em>N</em>C</div>
+    <div class="brand">SYN<em>G</em></div>
     <div class="row" style="gap:10px">
+      <span id="roundChip" class="chip hide">Round 1 / 5</span>
       <span id="spotifyChip" class="chip">Spotify: offline</span>
-      <span id="playersChip" class="chip">0 singers</span>
-      <button id="resetBtn" class="ghost">Reset match</button>
+      <span id="teamsChip" class="chip">0 teams</span>
+      <button id="quitBtn" class="ghost hide">Quit to setup</button>
     </div>
   </header>
 
-  <!-- ============ SETUP / LOBBY ============ -->
-  <section id="viewLobby" class="stack" style="flex:1 1 auto;min-height:0;gap:clamp(14px,2.4vmin,30px)">
+  <!-- ============ SETUP ============ -->
+  <section id="viewSetup" class="stack" style="flex:1 1 auto;min-height:0;overflow:auto;gap:clamp(12px,2vmin,26px)">
     <div class="row" style="gap:clamp(20px,4vmin,60px);align-items:flex-end">
       <div>
-        <div class="label" style="margin-bottom:.8em">Join at <span class="acid" id="joinUrl">—</span></div>
+        <div class="label" style="margin-bottom:.8em">Teams join at <span class="acid" id="joinUrl">—</span></div>
         <div class="codebox" id="codeBox"></div>
       </div>
       <div class="grow"></div>
-      <div id="lobbyPlayers" class="slots"></div>
     </div>
 
-    <div id="needSpotify" class="panel stack center hide" style="padding:clamp(20px,4vmin,48px);gap:16px">
-      <div class="d3">Connect Spotify to start</div>
-      <p class="muted" style="max-width:52ch;margin:0 auto;font-size:14px;line-height:1.6">
-        SYNC plays full tracks through your own Spotify account. You need Premium — that is Spotify's
+    <div id="teamSlots" class="teamSlots"></div>
+
+    <div id="needSpotify" class="panel stack center hide" style="padding:clamp(16px,3vmin,32px);gap:12px">
+      <div class="d3">Connect Spotify to play the songs</div>
+      <p class="muted" style="max-width:56ch;margin:0 auto;font-size:14px;line-height:1.6">
+        SYNG plays full tracks through your own Spotify account. You need Premium — that is Spotify's
         rule for web playback, not ours.
       </p>
-      <div><button id="loginBtn" class="primary huge">Connect Spotify</button></div>
-      <div id="cfgWarn" class="label hide" style="color:var(--p1)">
-        No SPOTIFY_CLIENT_ID on the server — see the README
-      </div>
-      <a class="label" href="?manual=1" style="color:var(--mute);text-decoration:underline">
-        or play the song yourself — manual mode
-      </a>
+      <div><button id="loginBtn" class="primary">Connect Spotify</button></div>
+      <div id="cfgWarn" class="label hide" style="color:var(--p1)">No SPOTIFY_CLIENT_ID on the server — see the README</div>
+      <a class="label" href="?manual=1" style="color:var(--mute);text-decoration:underline">or play the songs yourself — manual mode</a>
     </div>
 
-    <div id="picker" class="panel stack hide" style="padding:clamp(14px,2.4vmin,26px);flex:1 1 auto;min-height:0;gap:14px">
+    <div class="panel settings">
+      <div class="stack" style="gap:10px">
+        <div class="label">Mode</div>
+        <div class="modes">
+          <button class="mode" data-mode="random">
+            <span class="mt">Random hits</span>
+            <span class="md">Three famous songs appear. Teams take turns picking one. Singers are drawn at random.</span>
+          </button>
+          <button class="mode" data-mode="master">
+            <span class="mt">Game master</span>
+            <span class="md">You pick every song, and who sings for each team — or let the dice decide.</span>
+          </button>
+        </div>
+      </div>
+      <div class="stack" style="gap:10px">
+        <div class="label">Rounds</div>
+        <div class="stepper">
+          <button id="roundsDown" aria-label="Fewer rounds">−</button>
+          <input id="rounds" type="number" min="1" max="30" value="5" inputmode="numeric">
+          <button id="roundsUp" aria-label="More rounds">+</button>
+        </div>
+        <div id="langWrap" class="stack" style="gap:10px">
+          <div class="label">Song languages</div>
+          <details id="langDD" class="dd">
+            <summary id="langSummary">English</summary>
+            <div id="langMenu" class="ddmenu"></div>
+          </details>
+        </div>
+      </div>
+      <div class="stack" style="gap:10px;justify-content:flex-end">
+        <button id="startBtn" class="primary huge">Start the game</button>
+        <div id="startHint" class="label center"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CHOOSING (random) ============ -->
+  <section id="viewChoosing" class="stack hide" style="flex:1 1 auto;min-height:0;justify-content:center;gap:clamp(14px,2.6vmin,34px)">
+    <div class="center stack" style="gap:10px">
+      <div class="label">Round <span class="rNo">1</span> of <span class="rOf">5</span></div>
+      <div class="d1" id="chooserName">—</div>
+      <div class="d3 muted">pick the song on your phone</div>
+    </div>
+    <div id="optionCards" class="optionCards"></div>
+    <div id="optionsMsg" class="label center"></div>
+    <div class="row" style="justify-content:center;gap:12px">
+      <button id="reshuffleBtn" class="ghost">Three different songs</button>
+    </div>
+    <div class="label center" style="opacity:.6">Phone gone quiet? Click a song to choose it for them.</div>
+  </section>
+
+  <!-- ============ PICK (game master) ============ -->
+  <section id="viewPick" class="stack hide" style="flex:1 1 auto;min-height:0;gap:14px">
+    <div class="row" style="align-items:baseline;gap:16px">
+      <div class="d2">Pick a song</div>
+      <div class="label">Round <span class="rNo">1</span> of <span class="rOf">5</span></div>
+    </div>
+    <div id="picker" class="panel stack" style="padding:clamp(14px,2.4vmin,26px);flex:1 1 auto;min-height:0;gap:14px">
       <div class="row">
         <div class="grow"><input id="q" placeholder="Search a song everyone knows…" autocomplete="off"></div>
         <button id="manualGo" class="ghost hide">Use this title</button>
-        <select id="winAt" style="width:auto">
-          <option value="1">First to 1</option>
-          <option value="2">First to 2</option>
-          <option value="3" selected>First to 3</option>
-          <option value="5">First to 5</option>
-        </select>
       </div>
       <div id="results" class="results"></div>
       <div id="searchHint" class="hintwrap label">Type a title. Famous choruses work best.</div>
+    </div>
+  </section>
+
+  <!-- ============ SINGERS (game master) ============ -->
+  <section id="viewSingers" class="stack hide" style="flex:1 1 auto;min-height:0;gap:clamp(12px,2vmin,24px)">
+    <div class="row" style="align-items:baseline;gap:16px">
+      <div class="d2">Who sings?</div>
+      <div class="label grow"><span id="singSong">—</span></div>
+      <button id="randAllBtn" class="ghost">Random for everyone</button>
+    </div>
+    <div id="singerCols" class="singerCols"></div>
+    <div class="row" style="justify-content:center;gap:14px">
+      <button id="lockBtn" class="primary huge">Announce the singers</button>
+      <button class="ghost diffBtn">Different song</button>
     </div>
   </section>
 
@@ -68,17 +131,19 @@
     <div class="row" style="gap:clamp(16px,3vmin,40px);align-items:center;justify-content:center">
       <img id="armArt" alt="" style="width:clamp(110px,18vmin,240px);height:clamp(110px,18vmin,240px);object-fit:cover;border:2px solid var(--line)">
       <div class="stack" style="gap:6px">
-        <div class="label">Round <span id="armRound">1</span> · first to <span id="armWinAt">3</span></div>
+        <div class="label">Round <span class="rNo">1</span> of <span class="rOf">5</span></div>
         <div class="d2" id="armTitle">—</div>
         <div class="d3 muted" id="armArtist">—</div>
         <div class="label acid" id="armWindow">—</div>
       </div>
     </div>
+    <div id="lineup" class="lineup"></div>
     <div class="row" style="justify-content:center;gap:14px;flex-wrap:wrap">
-      <button id="goBtn" class="primary huge">Sing the whole thing</button>
-      <button id="backBtn" class="ghost">Pick another song</button>
+      <button id="goBtn" class="primary huge">Sing!</button>
+      <button id="reannBtn" class="ghost">Announce again</button>
+      <button class="ghost diffBtn">Different song</button>
     </div>
-    <div class="label center" style="opacity:.7">Phones ready: <span id="readyCount">0</span> — hold it close to your mouth and belt it</div>
+    <div id="armHint" class="label center" style="opacity:.8"></div>
   </section>
 
   <!-- ============ LIVE ============ -->
@@ -100,7 +165,7 @@
   <!-- ============ REVEAL ============ -->
   <section id="viewReveal" class="stack hide" style="flex:1 1 auto;min-height:0;gap:clamp(12px,2vmin,24px)">
     <div class="center stack" style="gap:8px">
-      <div class="label">Round <span id="revRound">1</span></div>
+      <div class="label">Round <span class="rNo">1</span> of <span class="rOf">5</span></div>
       <div id="revStamp" class="stamp" style="align-self:center">—</div>
     </div>
     <div id="revRows" class="stack" style="gap:8px"></div>
@@ -108,25 +173,41 @@
       <div class="label">The full sheet you were up against</div>
       <div id="revLyrics" style="font-size:clamp(15px,2.1vmin,26px);line-height:1.5;font-weight:700"></div>
     </div>
-    <div class="grow"></div>
     <div class="row" style="justify-content:center">
-      <button id="nextBtn" class="primary huge">Next song</button>
+      <button id="nextBtn" class="primary huge">Next round</button>
     </div>
   </section>
 
-  <!-- ============ CHAMPION ============ -->
-  <section id="viewChamp" class="stack hide center" style="flex:1 1 auto;justify-content:center;gap:24px">
-    <div class="label">Match over</div>
+  <!-- ============ FINAL ============ -->
+  <section id="viewFinal" class="stack hide center" style="flex:1 1 auto;min-height:0;justify-content:center;gap:clamp(14px,2.4vmin,28px)">
+    <div class="label">Game over · <span id="finalRounds">5</span> rounds</div>
     <div id="champName" class="d1">—</div>
     <div class="d3 muted" id="champLine">—</div>
-    <div class="row" style="justify-content:center"><button id="againBtn" class="primary huge">Run it back</button></div>
+    <div id="standings" class="standings"></div>
+    <div class="row" style="justify-content:center;gap:14px">
+      <button id="againBtn" class="primary huge">Play again — same teams</button>
+      <button id="newTeamsBtn" class="ghost">New teams</button>
+    </div>
   </section>
 </main>
 
-<!-- countdown overlay -->
+<!-- singer announcement -->
+<div id="announce" class="overlay announce" hidden>
+  <div class="label" style="font-size:clamp(12px,2vmin,22px)">Round <span id="annRound">1</span> · step up to the mic</div>
+  <div id="annRows" class="annRows"></div>
+  <div class="label" id="annSong" style="font-size:clamp(11px,1.6vmin,18px)"></div>
+</div>
+
+<!-- countdown -->
 <div id="countOverlay" class="overlay" hidden>
   <div class="label">Get the phone to your mouth</div>
   <div id="countNum" class="count">3</div>
+</div>
+
+<!-- waiting for the last clips -->
+<div id="scoringOverlay" class="overlay" hidden>
+  <div class="count" style="font-size:clamp(50px,12vmin,150px);animation:none" id="scoringTxt">Counting every word…</div>
+  <div class="label">Waiting for the last seconds from each phone</div>
 </div>
 
 <script type="module" src="/host.js"></script>

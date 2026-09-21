@@ -1,33 +1,35 @@
 // ---------------------------------------------------------------------------
-// SYNC — the big screen. Owns Spotify playback and all the drama.
+// SYNG — the host screen (laptop). Owns Spotify playback and the big display.
 // ---------------------------------------------------------------------------
 
-import { $, colorFor, connect, confetti, shake } from '/lib.js';
+import { $, $$, colorFor, connect, confetti, shake } from '/lib.js';
 import * as sp from '/spotify.js';
 
 const el = {
-  spotifyChip: $('#spotifyChip'), playersChip: $('#playersChip'),
-  codeBox: $('#codeBox'), joinUrl: $('#joinUrl'), lobbyPlayers: $('#lobbyPlayers'),
+  spotifyChip: $('#spotifyChip'), teamsChip: $('#teamsChip'), roundChip: $('#roundChip'), quitBtn: $('#quitBtn'),
+  codeBox: $('#codeBox'), joinUrl: $('#joinUrl'), teamSlots: $('#teamSlots'),
   needSpotify: $('#needSpotify'), loginBtn: $('#loginBtn'), cfgWarn: $('#cfgWarn'),
-  picker: $('#picker'), q: $('#q'), results: $('#results'), searchHint: $('#searchHint'),
-  winAt: $('#winAt'),
+  rounds: $('#rounds'), langWrap: $('#langWrap'), langDD: $('#langDD'), langSummary: $('#langSummary'), langMenu: $('#langMenu'),
+  startBtn: $('#startBtn'), startHint: $('#startHint'),
+  chooserName: $('#chooserName'), optionCards: $('#optionCards'), optionsMsg: $('#optionsMsg'), reshuffleBtn: $('#reshuffleBtn'),
+  q: $('#q'), results: $('#results'), searchHint: $('#searchHint'),
+  singSong: $('#singSong'), singerCols: $('#singerCols'), lockBtn: $('#lockBtn'), randAllBtn: $('#randAllBtn'),
+  armArt: $('#armArt'), armTitle: $('#armTitle'), armArtist: $('#armArtist'), armWindow: $('#armWindow'),
+  lineup: $('#lineup'), goBtn: $('#goBtn'), reannBtn: $('#reannBtn'), armHint: $('#armHint'),
+  liveTitle: $('#liveTitle'), liveArtist: $('#liveArtist'), clock: $('#clock'), timeBar: $('#timeBar'), arena: $('#arena'), stopBtn: $('#stopBtn'),
+  revStamp: $('#revStamp'), revRows: $('#revRows'), revLyrics: $('#revLyrics'), nextBtn: $('#nextBtn'),
+  champName: $('#champName'), champLine: $('#champLine'), standings: $('#standings'), finalRounds: $('#finalRounds'),
+  againBtn: $('#againBtn'), newTeamsBtn: $('#newTeamsBtn'),
+  announce: $('#announce'), annRound: $('#annRound'), annRows: $('#annRows'), annSong: $('#annSong'),
+  countOverlay: $('#countOverlay'), countNum: $('#countNum'), scoringOverlay: $('#scoringOverlay'),
   views: {
-    lobby: $('#viewLobby'), armed: $('#viewArmed'), live: $('#viewLive'),
-    reveal: $('#viewReveal'), champ: $('#viewChamp'),
+    setup: $('#viewSetup'), choosing: $('#viewChoosing'), pick: $('#viewPick'), singers: $('#viewSingers'),
+    armed: $('#viewArmed'), live: $('#viewLive'), reveal: $('#viewReveal'), final: $('#viewFinal'),
   },
-  armArt: $('#armArt'), armTitle: $('#armTitle'), armArtist: $('#armArtist'),
-  armWindow: $('#armWindow'), armRound: $('#armRound'), armWinAt: $('#armWinAt'),
-  readyCount: $('#readyCount'),
-  goBtn: $('#goBtn'), backBtn: $('#backBtn'), stopBtn: $('#stopBtn'),
-  liveTitle: $('#liveTitle'), liveArtist: $('#liveArtist'), clock: $('#clock'),
-  timeBar: $('#timeBar'), arena: $('#arena'),
-  revRound: $('#revRound'), revStamp: $('#revStamp'), revRows: $('#revRows'), revLyrics: $('#revLyrics'),
-  nextBtn: $('#nextBtn'), againBtn: $('#againBtn'), resetBtn: $('#resetBtn'),
-  countOverlay: $('#countOverlay'), countNum: $('#countNum'),
 };
 
 // Manual mode: no Spotify at all. You play the song from wherever you like and
-// SYNC just runs the clock. Lyrics still come from LRCLIB.
+// SYNG just runs the clock. Lyrics still come from LRCLIB.
 const MANUAL = new URLSearchParams(location.search).has('manual');
 const LANG_NAMES = {
   'en-US': 'English', 'es-ES': 'Spanish', 'pt-BR': 'Portuguese', 'fr-FR': 'French',
@@ -35,12 +37,30 @@ const LANG_NAMES = {
   'ko-KR': 'Korean', 'ru-RU': 'Russian', 'ar-SA': 'Arabic',
 };
 
+// The host's game preferences survive reloads and future games on this laptop.
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('syng:' + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem('syng:' + k, JSON.stringify(v)); } catch {} },
+};
+const prefs = {
+  mode: store.get('mode', 'random') === 'master' ? 'master' : 'random',
+  rounds: clampRounds(store.get('rounds', 5)),
+  langs: store.get('langs', ['en']),
+};
+if (!Array.isArray(prefs.langs) || !prefs.langs.length) prefs.langs = ['en'];
+function clampRounds(n) { return Math.min(30, Math.max(1, Math.round(Number(n) || 5))); }
+
 let clientId = '';
+let languages = [{ iso: 'en', name: 'English' }];
 let state = null;
 let net = null;
 let lastPhase = null;
-let lastRoundNo = -1;
+let lastRevealRound = -1;
+let lastFinalShown = false;
+let picks = {};              // game master: teamId -> member
+let suggestions = {};
 
+const escape_ = (s) => String(s ?? '').replace(/[<>&"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
 const mmss = (ms) => {
   const s = Math.max(0, Math.round(ms / 1000));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
@@ -49,12 +69,15 @@ const clockText = (ms) => {
   const s = Math.max(0, Math.ceil(ms / 1000));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 };
+const teamById = (id) => state?.teams.find((t) => t.id === id);
 
 /* --- boot ---------------------------------------------------------------- */
 (async function boot() {
   const cfg = await fetch('/api/config').then((r) => r.json()).catch(() => ({}));
   clientId = cfg.spotifyClientId || '';
-  if (!cfg.configured) el.cfgWarn.classList.remove('hide');
+  if (cfg.languages?.length) languages = cfg.languages;
+  if (!cfg.configured && !MANUAL) el.cfgWarn.classList.remove('hide');
+  buildSettings();
 
   if (clientId && !MANUAL) {
     await sp.completeLogin(clientId);
@@ -69,22 +92,20 @@ const clockText = (ms) => {
   }
 
   net = connect({
-    onOpen: (api) => api.send({ t: 'host:hello', code: sessionStorage.getItem('sync:code') || undefined }),
+    onOpen: (api) => api.send({ t: 'host:hello', code: sessionStorage.getItem('syng:code') || undefined }),
     onMessage: handle,
-    onDrop: () => { el.playersChip.textContent = 'reconnecting…'; },
+    onDrop: () => { el.teamsChip.textContent = 'reconnecting…'; },
   });
 })();
 
 let sawPlayback = false;
-
 function startPlayer() {
   sp.createPlayer(clientId, {
-    onReady: () => paintSpotify(),
+    onReady: () => { paintSpotify(); render(); },
     onState: (st) => {
       if (!st) return;
       if (!st.paused) { sawPlayback = true; return; }
-      // Spotify parks a finished track at position 0, paused. That is the song
-      // ending, not the host pausing mid-way.
+      // Spotify parks a finished track at position 0, paused: the song ended.
       if (sawPlayback && st.position === 0 && state?.phase === 'live') {
         sawPlayback = false;
         net.send({ t: 'host:ended' });
@@ -92,27 +113,11 @@ function startPlayer() {
     },
     onError: (kind, msg) => {
       paintSpotify();
-      if (kind === 'account_error') {
-        el.spotifyChip.textContent = 'Spotify Premium required';
-      } else if (kind === 'authentication_error') {
-        sp.logout();
-      }
+      if (kind === 'account_error') el.spotifyChip.textContent = 'Spotify Premium required';
+      else if (kind === 'authentication_error') sp.logout();
       console.warn('[spotify]', kind, msg);
     },
   });
-}
-
-function pickManualTrack() {
-  const raw = el.q.value.trim();
-  if (!raw) return;
-  const [artist, ...rest] = raw.split(/\s*[-\u2013]\s*/);
-  const title = rest.join(' - ') || artist;
-  el.searchHint.classList.remove('hide');
-  el.searchHint.textContent = 'Finding the lyrics...';
-  net.send({ t: 'host:track', track: {
-    id: 'manual', uri: null, name: title, artist: rest.length ? artist : '',
-    album: '', art: '', durationMs: 0,
-  } });
 }
 
 function paintSpotify() {
@@ -120,7 +125,6 @@ function paintSpotify() {
     el.spotifyChip.textContent = 'Manual mode';
     el.spotifyChip.classList.add('hot');
     el.needSpotify.classList.add('hide');
-    el.picker.classList.remove('hide');
     return;
   }
   const inOk = sp.isLoggedIn();
@@ -128,16 +132,52 @@ function paintSpotify() {
   el.spotifyChip.textContent = !inOk ? 'Spotify: offline' : ready ? 'Spotify: ready' : 'Spotify: waking…';
   el.spotifyChip.classList.toggle('hot', ready);
   el.needSpotify.classList.toggle('hide', inOk);
-  el.picker.classList.toggle('hide', !inOk);
+}
+el.loginBtn.addEventListener('click', () => clientId && sp.login(clientId));
+
+/* --- setup controls ---------------------------------------------------------- */
+function buildSettings() {
+  el.rounds.value = prefs.rounds;
+  el.langMenu.innerHTML = languages.map((l) => `
+    <label class="ddopt"><input type="checkbox" value="${l.iso}" ${prefs.langs.includes(l.iso) ? 'checked' : ''}><span>${escape_(l.name)}</span></label>`).join('');
+  paintSettings();
 }
 
-el.loginBtn.addEventListener('click', () => clientId && sp.login(clientId));
+function paintSettings() {
+  for (const b of $$('.mode')) b.classList.toggle('on', b.dataset.mode === prefs.mode);
+  el.langWrap.classList.toggle('hide', prefs.mode !== 'random');
+  const names = languages.filter((l) => prefs.langs.includes(l.iso)).map((l) => l.name);
+  el.langSummary.textContent = names.length ? names.join(', ') : 'English';
+}
+
+for (const b of $$('.mode')) {
+  b.addEventListener('click', () => { prefs.mode = b.dataset.mode; store.set('mode', prefs.mode); paintSettings(); });
+}
+const setRounds = (n) => { prefs.rounds = clampRounds(n); el.rounds.value = prefs.rounds; store.set('rounds', prefs.rounds); };
+$('#roundsDown').addEventListener('click', () => setRounds(prefs.rounds - 1));
+$('#roundsUp').addEventListener('click', () => setRounds(prefs.rounds + 1));
+el.rounds.addEventListener('change', () => setRounds(el.rounds.value));
+el.langMenu.addEventListener('change', () => {
+  const chosen = $$('input', el.langMenu).filter((i) => i.checked).map((i) => i.value);
+  if (!chosen.length) {                       // at least one language, always
+    $$('input', el.langMenu).find((i) => i.value === 'en').checked = true;
+    chosen.push('en');
+  }
+  prefs.langs = chosen;
+  store.set('langs', chosen);
+  paintSettings();
+});
+document.addEventListener('click', (e) => { if (!el.langDD.contains(e.target)) el.langDD.open = false; });
+
+el.startBtn.addEventListener('click', () => {
+  net.send({ t: 'host:start', mode: prefs.mode, rounds: prefs.rounds, langs: prefs.langs });
+});
 
 /* --- socket -------------------------------------------------------------- */
 function handle(msg) {
   switch (msg.t) {
     case 'welcome':
-      sessionStorage.setItem('sync:code', msg.code);
+      sessionStorage.setItem('syng:code', msg.code);
       break;
     case 'state':
       state = msg.room;
@@ -146,6 +186,13 @@ function handle(msg) {
     case 'fx':
       if (msg.kind === 'countdown') runCountdown(msg.ms);
       if (msg.kind === 'joined') shake(document.querySelector('.stage'), 260);
+      if (msg.kind === 'singers') setTimeout(() => showAnnouncement(msg.singers, msg.roundNo), 60);
+      break;
+    case 'resolve':
+      resolveSong(msg.song);
+      break;
+    case 'suggest':
+      suggestions = msg.singers || {};
       break;
     case 'play':
       startPlayback(msg.positionMs);
@@ -160,9 +207,32 @@ function handle(msg) {
   }
 }
 
+/* --- Spotify lookup for a jukebox song (random mode) ---------------------- */
+const simplify = (t) => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+  .replace(/\s-\s.*$/, '').replace(/\(.*?\)|\[.*?\]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+
+async function resolveSong(song) {
+  if (MANUAL || !clientId || !sp.isLoggedIn()) return net.send({ t: 'host:media' });
+  let items = [];
+  try { items = await sp.search(clientId, `track:${song.title} artist:${song.artist}`); } catch (e) { console.warn(e); }
+  if (!items.length) { try { items = await sp.search(clientId, `${song.title} ${song.artist}`); } catch {} }
+  const want = simplify(song.title);
+  const artist = simplify(song.artist);
+  const cost = (t) => {
+    const name = simplify(t.name);
+    let c = name === want ? 0 : name.startsWith(want) ? 60_000 : 300_000;
+    if (!simplify(t.artist).includes(artist.split(' ')[0])) c += 120_000;
+    if (song.durationMs) c += Math.abs(t.durationMs - song.durationMs);   // match the lyric sheet's recording
+    return c;
+  };
+  items.sort((a, b) => cost(a) - cost(b));
+  const best = items[0];
+  net.send({ t: 'host:media', uri: best?.uri, art: best?.art, durationMs: best?.durationMs });
+}
+
 /* --- playback ------------------------------------------------------------ */
 async function startPlayback(positionMs) {
-  if (MANUAL) return net.send({ t: 'host:playing', positionMs: 0 });
+  if (MANUAL || !state.track?.uri) return net.send({ t: 'host:playing', positionMs: 0 });
   sawPlayback = false;
   try {
     await sp.playTrack(clientId, state.track.uri, positionMs);
@@ -180,8 +250,9 @@ async function startPlayback(positionMs) {
   net.send({ t: 'host:playing', positionMs });
 }
 
-/* --- countdown ----------------------------------------------------------- */
+/* --- overlays ------------------------------------------------------------ */
 function runCountdown(ms) {
+  el.announce.hidden = true;
   el.countOverlay.hidden = false;
   const steps = ['3', '2', '1', 'SING'];
   const each = ms / steps.length;
@@ -191,14 +262,37 @@ function runCountdown(ms) {
     void el.countNum.offsetWidth;
     el.countNum.style.animation = '';
     el.countNum.style.color = s === 'SING' ? 'var(--p5)' : 'var(--acid)';
-    el.countNum.style.fontSize = s === 'SING' ? 'clamp(70px,22vmin,260px)' : '';
   }, i * each));
   setTimeout(() => { el.countOverlay.hidden = true; }, ms + 260);
 }
 
-/* --- search -------------------------------------------------------------- */
+let annTimer = 0;
+function showAnnouncement(singers, roundNo) {
+  if (!state) return;
+  const teams = state.teams.filter((t) => singers?.[t.id]);
+  if (!teams.length) return;
+  el.annRound.textContent = roundNo || state.roundNo;
+  el.annSong.textContent = state.track ? `${state.track.name} — ${state.track.artist}` : '';
+  el.annRows.innerHTML = teams.map((t, i) => `
+    ${i ? `<div class="annVs" style="animation-delay:${i * 0.55 - 0.2}s">vs</div>` : ''}
+    <div class="annRow" style="--c:${colorFor(t.slot)};animation-delay:${i * 0.55}s">
+      <span class="annTeam">${escape_(t.name)}</span>
+      <span class="annName">${escape_(singers[t.id])}</span>
+    </div>`).join('');
+  el.announce.hidden = false;
+  teams.forEach((t, i) => setTimeout(() => {
+    shake(el.announce, 300);
+    confetti([colorFor(t.slot), '#ffffff'], 70);
+  }, i * 550 + 250));
+  clearTimeout(annTimer);
+  annTimer = setTimeout(() => { el.announce.hidden = true; }, 3200 + teams.length * 550);
+}
+el.announce.addEventListener('click', () => { el.announce.hidden = true; });
+
+/* --- song pick (game master) ------------------------------------------------ */
 let searchTimer = 0;
 el.q.addEventListener('input', () => {
+  if (MANUAL) return;
   clearTimeout(searchTimer);
   const q = el.q.value;
   if (!q.trim()) { el.results.innerHTML = ''; el.searchHint.classList.remove('hide'); return; }
@@ -206,83 +300,199 @@ el.q.addEventListener('input', () => {
     let items = [];
     try { items = await sp.search(clientId, q); } catch (e) { console.warn(e); }
     el.searchHint.classList.toggle('hide', items.length > 0);
+    if (!items.length) el.searchHint.textContent = 'Nothing found. Try the artist name too.';
     el.results.innerHTML = '';
     for (const t of items) {
       const b = document.createElement('button');
       b.className = 'result';
       b.innerHTML = `<img src="${t.art}" alt=""><span class="grow"><span class="rt">${escape_(t.name)}</span><br><span class="ra">${escape_(t.artist)} · ${mmss(t.durationMs)}</span></span>`;
-      b.addEventListener('click', () => {
-        el.searchHint.classList.remove('hide');
-        el.searchHint.textContent = 'Finding the lyrics…';
-        net.send({ t: 'host:track', track: t });
-      });
+      b.addEventListener('click', () => sendTrack(t));
       el.results.appendChild(b);
     }
   }, 260);
 });
 
-const escape_ = (s) => String(s).replace(/[<>&"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
+function sendTrack(track) {
+  el.searchHint.classList.remove('hide');
+  el.searchHint.textContent = 'Finding the lyrics…';
+  el.results.innerHTML = '';
+  net.send({ t: 'host:track', track });
+}
 
-el.winAt.addEventListener('change', () => net.send({ t: 'host:settings', winAt: Number(el.winAt.value) }));
+function pickManualTrack() {
+  const raw = el.q.value.trim();
+  if (!raw) return;
+  const [artist, ...rest] = raw.split(/\s*[-–]\s*/);
+  const title = rest.join(' - ') || artist;
+  sendTrack({ id: 'manual', uri: null, name: title, artist: rest.length ? artist : '', album: '', art: '', durationMs: 0 });
+}
 
+/* --- singer picks (game master) -------------------------------------------- */
+function pickFor(team, name) { picks[team.id] = name; renderSingers(); }
+function randomFor(team) {
+  const suggested = suggestions[team.id];
+  const others = team.members.filter((m) => m !== picks[team.id]);
+  const name = suggested && suggested !== picks[team.id] && team.members.includes(suggested)
+    ? suggested
+    : others[Math.floor(Math.random() * others.length)] || team.members[0];
+  delete suggestions[team.id];
+  pickFor(team, name);
+}
+el.singerCols.addEventListener('click', (e) => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  const team = teamById(b.dataset.team);
+  if (!team) return;
+  if (b.dataset.member !== undefined) pickFor(team, team.members[Number(b.dataset.member)]);
+  if (b.dataset.random !== undefined) randomFor(team);
+});
+el.randAllBtn.addEventListener('click', () => { for (const t of state.teams) randomFor(t); });
+el.lockBtn.addEventListener('click', () => net.send({ t: 'host:singers', singers: picks }));
+
+/* --- buttons --------------------------------------------------------------- */
+el.reshuffleBtn.addEventListener('click', () => net.send({ t: 'host:reshuffle' }));
+el.optionCards.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-idx]');
+  if (b) net.send({ t: 'host:choose', idx: Number(b.dataset.idx) });
+});
+for (const b of $$('.diffBtn')) b.addEventListener('click', () => net.send({ t: 'host:different' }));
 el.goBtn.addEventListener('click', () => { sp.unlockAudio(); net.send({ t: 'host:go' }); });
-el.backBtn.addEventListener('click', () => net.send({ t: 'host:next' }));
-el.nextBtn.addEventListener('click', () => net.send({ t: 'host:next' }));
-el.resetBtn.addEventListener('click', () => net.send({ t: 'host:reset' }));
-el.againBtn.addEventListener('click', () => net.send({ t: 'host:reset' }));
+el.reannBtn.addEventListener('click', () => showAnnouncement(state.singers, state.roundNo));
 el.stopBtn.addEventListener('click', () => net.send({ t: 'host:abort' }));
+el.nextBtn.addEventListener('click', () => net.send({ t: 'host:next' }));
+el.againBtn.addEventListener('click', () => net.send({ t: 'host:restart' }));
+el.newTeamsBtn.addEventListener('click', () => {
+  if (confirmTwice(el.newTeamsBtn, 'Tap again to clear all teams')) net.send({ t: 'host:newteams' });
+});
+el.quitBtn.addEventListener('click', () => {
+  if (confirmTwice(el.quitBtn, 'Tap again to quit')) net.send({ t: 'host:restart' });
+});
+el.teamSlots.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-kick]');
+  if (b && confirmTwice(b, 'Remove?')) net.send({ t: 'host:kick', teamId: b.dataset.kick });
+});
+
+/** No browser dialogs: a second click within 3s confirms. */
+function confirmTwice(btn, text) {
+  if (btn.dataset.armed === '1') { btn.dataset.armed = ''; btn.textContent = btn.dataset.label; return true; }
+  btn.dataset.label = btn.textContent;
+  btn.dataset.armed = '1';
+  btn.textContent = text;
+  setTimeout(() => { if (btn.dataset.armed === '1') { btn.dataset.armed = ''; btn.textContent = btn.dataset.label; } }, 3000);
+  return false;
+}
 
 /* --- render -------------------------------------------------------------- */
+const VIEW_OF = {
+  setup: 'setup', choosing: 'choosing', pick: 'pick', loading: 'pick', singers: 'singers', armed: 'armed',
+  countdown: 'live', live: 'live', scoring: 'live', reveal: 'reveal', final: 'final',
+};
+
 function render() {
   if (!state) return;
   const phase = state.phase;
-
-  el.codeBox.innerHTML = [...state.code].map((c) => `<span class="digit">${c}</span>`).join('');
-  el.joinUrl.textContent = location.host;
-  el.playersChip.textContent = `${state.players.length} singer${state.players.length === 1 ? '' : 's'}`;
-  el.armWinAt.textContent = state.settings.winAt;  el.winAt.value = String(state.settings.winAt);
-
-  const slots = Math.max(2, state.players.length);
-  el.lobbyPlayers.innerHTML = Array.from({ length: slots }, (_, i) => {
-    const p = state.players[i];
-    const c = colorFor(i);
-    if (!p) return `<div class="slot"><span class="label">Phone ${i + 1}</span><span class="sn muted">waiting…</span></div>`;
-    return `<div class="slot filled" style="border-color:${c}">
-      <span class="label" style="color:${p.micOk ? 'var(--p5)' : 'var(--p1)'}">${p.micOk ? 'mic armed' : 'no mic yet'}</span>
-      <span class="sn">${escape_(p.name)}</span>
-      <span class="sp" style="color:${c}">${p.points}</span>
-    </div>`;
-  }).join('');
-
-  const view = phase === 'champion' ? 'champ'
-    : phase === 'reveal' ? 'reveal'
-    : phase === 'live' || phase === 'countdown' ? 'live'
-    : phase === 'armed' ? 'armed'
-    : 'lobby';
+  const view = VIEW_OF[phase] || 'setup';
   for (const [k, node] of Object.entries(el.views)) node.classList.toggle('hide', k !== view);
 
-  // Back at song search after a round or "Pick another song": start clean.
-  if (view === 'lobby' && lastPhase && lastPhase !== 'lobby' && lastPhase !== 'loading') {
-    el.q.value = '';
-    el.results.innerHTML = '';
-    el.searchHint.classList.remove('hide');
-    el.searchHint.textContent = 'Type a title. Famous choruses work best.';
-  }
+  el.teamsChip.textContent = `${state.teams.length} team${state.teams.length === 1 ? '' : 's'}`;
+  const inGame = phase !== 'setup';
+  el.roundChip.classList.toggle('hide', !inGame || phase === 'final');
+  el.roundChip.textContent = `Round ${state.roundNo} / ${state.settings.rounds}`;
+  el.quitBtn.classList.toggle('hide', !inGame || phase === 'final');
+  for (const n of $$('.rNo')) n.textContent = state.roundNo;
+  for (const n of $$('.rOf')) n.textContent = state.settings.rounds;
+  el.scoringOverlay.hidden = phase !== 'scoring';
 
-  if (phase === 'loading') {
-    el.searchHint.classList.remove('hide');
-    el.searchHint.textContent = 'Finding the lyrics…';
-  }
-
+  if (view === 'setup') renderSetup();
+  if (view === 'choosing') renderChoosing();
+  if (view === 'pick') renderPick(phase);
+  if (phase === 'singers' && lastPhase !== 'singers') picks = {};
+  if (view === 'singers') renderSingers();
   if (view === 'armed') renderArmed();
   if (view === 'live') renderLive();
-  if (view === 'reveal' && state.roundNo !== lastRoundNo) { lastRoundNo = state.roundNo; renderReveal(); }
-  if (view === 'reveal') renderRevealRows();
-  if (view === 'champ' && lastPhase !== 'champion') renderChampion();
+  if (view === 'reveal') renderReveal();
+  if (view === 'final') renderFinal();
 
   if (phase === 'live' && lastPhase !== 'live') startClock();
   if (phase !== 'live' && lastPhase === 'live') stopClock();
+  if (phase !== 'final') lastFinalShown = false;
   lastPhase = phase;
+}
+
+function renderSetup() {
+  el.codeBox.innerHTML = [...state.code].map((c) => `<span class="digit">${c}</span>`).join('');
+  el.joinUrl.textContent = location.host;
+  el.teamSlots.innerHTML = Array.from({ length: 4 }, (_, i) => {
+    const t = state.teams.find((x) => x.slot === i);
+    const c = colorFor(i);
+    if (!t) return `<div class="tslot"><span class="label">Team ${i + 1}</span><span class="tn muted">waiting for a phone…</span></div>`;
+    return `<div class="tslot filled ${t.connected ? '' : 'dim'}" style="--c:${c}">
+      <div class="row" style="justify-content:space-between;gap:8px">
+        <span class="label" style="color:${t.micOk ? 'var(--p5)' : 'var(--p1)'}">${t.micOk ? 'mic armed' : 'no mic yet'}</span>
+        <button class="kick" data-kick="${t.id}" title="Remove team">✕</button>
+      </div>
+      <span class="tn" style="color:${c}">${escape_(t.name)}</span>
+      <span class="tm">${t.members.map(escape_).join(' · ')}</span>
+      <span class="label">${t.members.length} ${t.members.length === 1 ? 'singer' : 'singers'}</span>
+    </div>`;
+  }).join('');
+
+  const needSpotify = !MANUAL && !sp.isLoggedIn();
+  const noTeams = state.teams.length === 0;
+  el.startBtn.disabled = needSpotify || noTeams;
+  el.startHint.textContent = needSpotify ? 'Connect Spotify first (or use manual mode)'
+    : noTeams ? 'Waiting for at least one team to join'
+    : state.teams.some((t) => !t.micOk) ? 'Some phones have not armed their mic yet' : `${state.teams.length} team${state.teams.length === 1 ? '' : 's'} ready`;
+  picks = {};
+}
+
+function renderChoosing() {
+  const chooser = teamById(state.chooserId);
+  el.chooserName.textContent = chooser ? `${chooser.name} picks` : 'Pick a song';
+  el.chooserName.style.color = chooser ? colorFor(chooser.slot) : '';
+  const opts = state.options;
+  el.optionsMsg.textContent = state.optionsError || (opts ? '' : 'Shuffling the jukebox…');
+  el.optionsMsg.style.color = state.optionsError ? 'var(--p1)' : '';
+  el.reshuffleBtn.textContent = state.optionsError ? 'Try again' : 'Three different songs';
+  el.optionCards.innerHTML = (opts || []).map((o, i) => `
+    <button class="optCard" data-idx="${i}" style="--c:${colorFor(i + 1)}">
+      <span class="oYear">${o.year || ''}</span>
+      <span class="oTitle">${escape_(o.title)}</span>
+      <span class="oArtist">${escape_(o.artist)}</span>
+    </button>`).join('');
+}
+
+function renderPick(phase) {
+  if (phase === 'loading') {
+    el.searchHint.classList.remove('hide');
+    el.searchHint.textContent = 'Finding the lyrics…';
+  } else if (lastPhase !== 'pick' && lastPhase !== 'loading') {
+    el.q.value = '';
+    el.results.innerHTML = '';
+    el.searchHint.classList.remove('hide');
+    el.searchHint.textContent = MANUAL ? 'Type "Artist - Title" and hit "Use this title".' : 'Type a title. Famous choruses work best.';
+    setTimeout(() => el.q.focus(), 50);
+  }
+}
+
+function renderSingers() {
+  if (!state) return;
+  el.singSong.textContent = state.track ? `${state.track.name} — ${state.track.artist}` : '';
+  el.singerCols.innerHTML = state.teams.map((t) => {
+    const c = colorFor(t.slot);
+    return `<div class="scol" style="--c:${c}">
+      <div class="row" style="justify-content:space-between">
+        <span class="tn" style="color:${c}">${escape_(t.name)}</span>
+        <button class="ghost" data-team="${t.id}" data-random>Random</button>
+      </div>
+      <div class="members">${t.members.map((m, i) => `
+        <button class="member ${picks[t.id] === m ? 'on' : ''}" data-team="${t.id}" data-member="${i}">${escape_(m)}</button>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+  const missing = state.teams.filter((t) => !picks[t.id]).length;
+  el.lockBtn.disabled = missing > 0;
+  el.lockBtn.textContent = missing ? `Pick ${missing} more` : 'Announce the singers';
 }
 
 function renderArmed() {
@@ -290,42 +500,52 @@ function renderArmed() {
   el.armArt.src = t.art || '';
   el.armArt.classList.toggle('hide', !t.art);
   el.armTitle.textContent = t.name || '—';
-  el.armArtist.textContent = t.artist || '—';
-  el.armRound.textContent = state.roundNo + 1;
-  el.armWindow.textContent = MANUAL
-    ? `Start the track from the top on SING - the whole song, ${mmss(state.roundMs)}, ${state.lineCount} lines`
-    : `The whole song - ${mmss(state.roundMs)}, ${state.lineCount} lines of lyrics`;
-  el.armWindow.textContent += ` · sung in ${LANG_NAMES[state.settings.lang] || state.settings.lang}`;
-  const ready = state.players.filter((p) => p.micOk).length;
-  el.readyCount.textContent = `${ready} / ${state.players.length}`;
-  el.goBtn.disabled = state.players.length === 0 || (!MANUAL && !sp.playerReady());
+  el.armArtist.textContent = [t.artist, state.song?.year].filter(Boolean).join(' · ') || '—';
+  el.armWindow.textContent = `The whole song · ${mmss(state.roundMs)} · ${state.lineCount} lines · sung in ${LANG_NAMES[state.settings.lang] || state.settings.lang}`;
+  el.lineup.innerHTML = state.teams.map((team) => `
+    <div class="lu" style="--c:${colorFor(team.slot)}">
+      <span class="label" style="color:${colorFor(team.slot)}">${escape_(team.name)}</span>
+      <span class="luName">${escape_(state.singers[team.id] || '—')}</span>
+      <span class="label" style="color:${team.micOk ? 'var(--p5)' : 'var(--p1)'}">${team.micOk ? 'mic armed' : 'no mic'}</span>
+    </div>`).join('');
+
+  let hint = 'Hand each team\'s phone to its singer. Hold it close and belt it.';
+  let ok = true;
+  if (!MANUAL) {
+    if (t.resolving) { ok = false; hint = 'Finding it on Spotify…'; }
+    else if (!t.uri) { ok = false; hint = 'Could not find this one on Spotify. Try a different song.'; }
+    else if (!sp.playerReady()) { ok = false; hint = 'Waiting for the Spotify player…'; }
+  } else {
+    hint = 'Get the song ready to play from the very start, then hit Sing!';
+  }
+  el.goBtn.disabled = !ok;
+  el.armHint.textContent = hint;
+  el.armHint.style.color = !ok && !t.resolving ? 'var(--p1)' : '';
 }
 
 function renderLive() {
   const t = state.track || {};
   el.liveTitle.textContent = t.name || '—';
   el.liveArtist.textContent = t.artist || '—';
-  const n = state.players.length;
-  el.arena.className = 'arena ' + (n <= 1 ? 'solo' : n === 2 ? 'duo' : 'many');
-
-  const top = Math.max(0, ...state.players.map((p) => p.percent));
-  el.arena.innerHTML = state.players.map((p) => {
-    const c = colorFor(p.slot);
-    const lead = p.percent > 0 && p.percent === top;
-    return `<div class="lane ${lead ? 'lead' : ''} ${p.connected ? '' : 'dim'}" style="--c:${c}">
-      <div class="fill" style="height:${p.percent}%"></div>
+  const n = state.teams.length;
+  el.arena.className = 'arena ' + (n <= 1 ? 'solo' : n === 2 ? 'duo' : n === 3 ? 'trio' : 'quad');
+  const top = Math.max(0, ...state.teams.map((p) => p.percent));
+  el.arena.innerHTML = state.teams.map((team) => {
+    const c = colorFor(team.slot);
+    const lead = team.percent > 0 && team.percent === top;
+    return `<div class="lane ${lead ? 'lead' : ''} ${team.connected ? '' : 'dim'}" style="--c:${c}">
+      <div class="fill" style="height:${team.percent}%"></div>
       <div class="laneTop">
         <div class="row" style="gap:8px;align-items:center">
-          <span class="dot ${p.micOk ? 'on' : ''}"></span>
-          <span class="label" style="color:${c}">${p.hits} / ${p.total || 0} words · run ${p.phrase}</span>
+          <span class="dot ${team.micOk ? 'on' : ''}"></span>
+          <span class="label" style="color:${c}">${escape_(team.name)} · ${team.points} pts</span>
         </div>
-        <div class="pname">${escape_(p.name)}</div>
-        <div class="ppts">${p.points}</div>
+        <div class="pname">${escape_(state.singers[team.id] || team.name)}</div>
       </div>
-      <div class="ppct">${p.percent}<span style="font-size:.45em">%</span></div>
+      <div class="ppct">${team.percent}<span style="font-size:.45em">%</span></div>
     </div>`;
   }).join('');
-  if (state.players.length === 2) {
+  if (n === 2) {
     const vs = document.createElement('div');
     vs.className = 'vs';
     vs.textContent = 'VS';
@@ -336,46 +556,50 @@ function renderLive() {
 let clockRaf = 0;
 function startClock() {
   const loop = () => {
-    if (!state?.endsAt) { clockRaf = requestAnimationFrame(loop); return; }
-    const left = Math.max(0, state.endsAt - (Date.now() + clockSkew));
-    el.clock.textContent = clockText(left);
-    el.timeBar.style.width = (100 * left / Math.max(1, state.roundMs)).toFixed(2) + '%';
-    el.clock.style.color = left < 15000 ? 'var(--p1)' : '';
+    if (state?.endsAt && state.phase === 'live') {
+      const left = Math.max(0, state.endsAt - (Date.now() + clockSkew));
+      el.clock.textContent = clockText(left);
+      el.timeBar.style.width = (100 * left / Math.max(1, state.roundMs)).toFixed(2) + '%';
+      el.clock.style.color = left < 15000 ? 'var(--p1)' : '';
+    }
     clockRaf = requestAnimationFrame(loop);
   };
   cancelAnimationFrame(clockRaf);
   clockRaf = requestAnimationFrame(loop);
 }
 function stopClock() { cancelAnimationFrame(clockRaf); clockRaf = 0; }
-
-let clockSkew = 0;   // serverNow - clientNow, keeps the timer honest
+let clockSkew = 0;
 setInterval(() => { if (state?.serverNow) clockSkew = state.serverNow - Date.now(); }, 2000);
 
+const ORD = ['1st', '2nd', '3rd', '4th'];
 function renderReveal() {
   const r = state.result;
   if (!r) return;
-  el.revRound.textContent = r.roundNo;
+  el.nextBtn.textContent = r.last ? 'Final results' : 'Next round';
   const win = r.rows.find((x) => x.id === r.winnerId);
-  el.revStamp.textContent = r.tie ? 'DEAD HEAT' : win ? `${win.name} takes it` : 'Nobody sang';
-  el.revStamp.style.color = win ? colorFor(win.slot) : 'var(--mute)';
-  el.revStamp.style.animation = 'none'; void el.revStamp.offsetWidth; el.revStamp.style.animation = '';
-  el.revLyrics.innerHTML = (r.lineText || []).map((l) => `<div>${escape_(l)}</div>`).join('') || '<span class="muted">—</span>';
-  shake(document.querySelector('.stage'));
-  if (win) confetti([colorFor(win.slot), '#ffffff', 'var(--acid)'.replace('var(--acid)', '#ffe600')], 120);
-}
-
-function renderRevealRows() {
-  const r = state.result;
-  if (!r) return;
-  el.revRows.innerHTML = r.rows.map((row) => {
+  if (r.roundNo !== lastRevealRound) {
+    lastRevealRound = r.roundNo;
+    el.revStamp.textContent = r.tie ? 'Dead heat' : win ? `${win.name} takes it` : 'Nobody sang';
+    el.revStamp.style.color = win ? colorFor(win.slot) : 'var(--mute)';
+    el.revStamp.style.fontSize = el.revStamp.textContent.length > 14 ? 'clamp(28px, 6.5vmin, 96px)' : '';
+    el.revStamp.style.animation = 'none'; void el.revStamp.offsetWidth; el.revStamp.style.animation = '';
+    el.revLyrics.innerHTML = (r.lineText || []).map((l) => `<div>${escape_(l)}</div>`).join('') || '<span class="muted">—</span>';
+    shake(document.querySelector('.stage'));
+    if (win) confetti([colorFor(win.slot), '#ffffff', '#ffe600'], 120);
+  }
+  let place = 0;
+  el.revRows.innerHTML = r.rows.map((row, i) => {
+    if (i && (row.percent !== r.rows[i - 1].percent || row.phrase !== r.rows[i - 1].phrase)) place = i;
     const c = colorFor(row.slot);
-    const pts = state.players.find((p) => p.id === row.id)?.points ?? 0;
+    const pts = teamById(row.id)?.points ?? 0;
     return `<div class="panel" style="padding:12px 16px;border-color:${row.id === r.winnerId ? c : 'var(--line)'}">
       <div class="row" style="gap:14px;align-items:baseline">
-        <span class="d3" style="color:${c};min-width:5ch">${row.percent}%</span>
-        <span class="grow" style="font-weight:700;font-size:18px">${escape_(row.name)}</span>
-        <span class="label">${row.hits}/${row.total} words · best run ${row.phrase}</span>
-        <span class="d3">${pts}</span>
+        <span class="label" style="min-width:3ch">${ORD[place] || ''}</span>
+        <span class="d3" style="color:${c};min-width:4.2ch">${row.percent}%</span>
+        <span class="grow" style="font-weight:700;font-size:18px">${escape_(row.name)} <span class="muted" style="font-weight:500">· ${escape_(row.singer)}</span></span>
+        <span class="label">${row.hits}/${row.total} words</span>
+        <span class="d3 gain" style="color:${row.gain ? 'var(--p5)' : 'var(--mute)'}">+${row.gain}</span>
+        <span class="d3" style="min-width:2.4ch;text-align:right">${pts}</span>
       </div>
       <div style="height:6px;background:var(--line);margin-top:8px">
         <div style="height:100%;width:${row.percent}%;background:${c};transition:width .6s cubic-bezier(.2,.9,.2,1)"></div>
@@ -384,12 +608,28 @@ function renderRevealRows() {
   }).join('');
 }
 
-function renderChampion() {
-  const r = state.result;
-  const champ = state.players.find((p) => p.id === r?.championId);
-  $('#champName').textContent = champ ? champ.name.toUpperCase() : 'WINNER';
-  $('#champName').style.color = champ ? colorFor(champ.slot) : 'var(--acid)';
-  $('#champLine').textContent = champ ? `${champ.points} rounds. Undisputed.` : '';
-  confetti(undefined, 260);
-  setTimeout(() => confetti(undefined, 180), 500);
+function renderFinal() {
+  const ranked = [...state.teams].sort((a, b) => b.points - a.points);
+  const top = ranked[0];
+  const tied = ranked.length > 1 && ranked[1].points === top?.points;
+  el.finalRounds.textContent = state.settings.rounds;
+  el.champName.textContent = !top ? '—' : tied ? 'It\'s a tie' : top.name;
+  el.champName.style.color = top && !tied ? colorFor(top.slot) : 'var(--acid)';
+  el.champLine.textContent = !top ? '' : tied
+    ? `${ranked.filter((t) => t.points === top.points).map((t) => t.name).join(' & ')} · ${top.points} points each`
+    : `Champions with ${top.points} points`;
+  let place = 0;
+  el.standings.innerHTML = ranked.map((t, i) => {
+    if (i && t.points !== ranked[i - 1].points) place = i;
+    return `<div class="stRow" style="--c:${colorFor(t.slot)}">
+      <span class="label">${ORD[place]}</span>
+      <span class="grow stName">${escape_(t.name)}</span>
+      <span class="d3">${t.points}</span>
+    </div>`;
+  }).join('');
+  if (!lastFinalShown) {
+    lastFinalShown = true;
+    confetti(undefined, 260);
+    setTimeout(() => confetti(undefined, 180), 500);
+  }
 }

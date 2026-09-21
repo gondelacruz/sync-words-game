@@ -6,7 +6,7 @@
 //
 // Groq free tier (Sept 2026): 20 requests/minute and 7,200 audio-seconds/hour
 // per key, and every request is billed as at least 10 seconds. The phones send
-// one clip every ~8s, so two phones stay at ~15 requests/minute. A small
+// one clip every ~15s, so four phones stay at ~16 requests/minute. A small
 // limiter below keeps us under 20/minute even if something goes wrong.
 // ---------------------------------------------------------------------------
 
