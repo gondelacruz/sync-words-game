@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: sync-lyrics-game-39ew          # <-- this sets your URL: https://<name>.onrender.com
+    name: syng          # <-- this sets your URL: https://<name>.onrender.com
     runtime: node
     plan: free
     buildCommand: npm install
