@@ -10,7 +10,7 @@ const el = {
   codeBox: $('#codeBox'), joinUrl: $('#joinUrl'), lobbyPlayers: $('#lobbyPlayers'),
   needSpotify: $('#needSpotify'), loginBtn: $('#loginBtn'), cfgWarn: $('#cfgWarn'),
   picker: $('#picker'), q: $('#q'), results: $('#results'), searchHint: $('#searchHint'),
-  lang: $('#lang'), winAt: $('#winAt'),
+  winAt: $('#winAt'),
   views: {
     lobby: $('#viewLobby'), armed: $('#viewArmed'), live: $('#viewLive'),
     reveal: $('#viewReveal'), champ: $('#viewChamp'),
@@ -218,7 +218,6 @@ el.q.addEventListener('input', () => {
 
 const escape_ = (s) => String(s).replace(/[<>&"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
 
-el.lang.addEventListener('change', () => net.send({ t: 'host:settings', lang: el.lang.value }));
 el.winAt.addEventListener('change', () => net.send({ t: 'host:settings', winAt: Number(el.winAt.value) }));
 
 el.goBtn.addEventListener('click', () => { sp.unlockAudio(); net.send({ t: 'host:go' }); });
@@ -286,7 +285,6 @@ function renderArmed() {
   const ready = state.players.filter((p) => p.micOk).length;
   el.readyCount.textContent = `${ready} / ${state.players.length}`;
   el.goBtn.disabled = state.players.length === 0 || (!MANUAL && !sp.playerReady());
-  el.backBtn.disabled = !t.name; // Disable if no track loaded
 }
 
 function renderLive() {
