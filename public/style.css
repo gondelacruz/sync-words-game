@@ -407,3 +407,88 @@ input::placeholder { color: #4b4660; }
 @media (max-width: 520px) {
   .modes { grid-template-columns: 1fr; }
 }
+
+/* ===========================================================================
+   YouTube player + up to ten teams
+   =========================================================================== */
+
+/* The one player. host.js / youtube.js moves it over the visible .ytSlot. It
+   sits above the scanline layer (z 999): YouTube allows nothing on top of it. */
+.ytWrap {
+  position: fixed; z-index: 1000; background: #000;
+  border: 2px solid var(--line); box-shadow: 0 0 40px -10px rgba(0,0,0,.9);
+}
+.ytWrap #ytPlayer, .ytWrap iframe { display: block; width: 100%; height: 100%; border: 0; }
+.ytWrap.parked { visibility: hidden; left: -10000px !important; top: 0 !important; width: 320px !important; height: 180px !important; }
+/* During the song nobody can pause it by clicking… */
+.ytWrap.live iframe { pointer-events: none; }
+/* …unless the browser blocked autoplay and it needs one click to start. */
+.ytWrap.live.needclick iframe { pointer-events: auto; }
+.ytWrap.needclick { border-color: var(--acid); box-shadow: 0 0 0 4px var(--acid), 0 0 60px var(--acid); }
+
+.ytSlot { aspect-ratio: 16 / 9; background: #000; border: 2px dashed var(--line); }
+.armedSlot { width: clamp(300px, 40vw, 620px); flex: 0 0 auto; }
+
+.videoBar { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 2px solid var(--line); }
+.videoWhat { font-size: 14px; line-height: 1.4; }
+.videoBar input { padding: 10px 12px; font-size: 14px; }
+.btnlink {
+  display: inline-flex; align-items: center; border: 2px solid var(--line); color: var(--mute);
+  font-size: 12px; padding: 10px 14px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; text-decoration: none;
+}
+.btnlink:hover { background: var(--line); color: var(--white); }
+
+/* --- live: video on the left, the teams on the right ------------------------- */
+.liveGrid { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(10px, 1.6vmin, 20px); }
+.liveGrid.video { grid-template-columns: minmax(0, 1.5fr) minmax(300px, 1fr); }
+.liveSlot { align-self: center; width: 100%; max-height: 100%; }
+
+.arena.list { display: flex; flex-direction: column; gap: clamp(5px, .9vmin, 12px); min-height: 0; }
+.arena.list .lane {
+  flex: 1 1 0; min-height: 0; max-height: 30vh;
+  flex-direction: row; align-items: center; justify-content: space-between;
+}
+.arena.list .lane .fill {
+  top: 0; bottom: 0; left: 0; right: auto; height: auto; width: 0%;
+  transition: width .28s cubic-bezier(.2,.9,.2,1);
+}
+.arena.list .lane .fill::after { inset: 0 0 0 auto; width: 3px; height: auto; }
+.arena.list .lane .laneTop { justify-content: center; padding: clamp(6px, 1.2vmin, 18px) clamp(10px, 1.6vmin, 22px); gap: 2px; }
+.arena.list .lane .pname { font-size: clamp(14px, min(4.4vmin, calc(28vh / var(--n))), 62px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.arena.list .lane .ppct { padding: 0 clamp(10px, 1.6vmin, 22px); font-size: clamp(22px, min(10vmin, calc(44vh / var(--n))), 140px); }
+.arena.list .lteam { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.arena.list.dense .lane .laneTop { padding-top: 2px; padding-bottom: 2px; }
+.arena.list.dense .label { font-size: 10px; letter-spacing: .18em; }
+
+/* --- setup with many teams --------------------------------------------------- */
+.teamSlots.many { grid-template-columns: repeat(5, 1fr); }
+.teamSlots.many .tslot { min-height: 92px; padding: 10px 12px; }
+.teamSlots.many .tslot .tn { font-size: clamp(16px, 2.2vmin, 28px); }
+.teamSlots.many .tslot .tm { font-size: 12px; max-height: 2.8em; }
+
+/* --- armed / reveal / final with many teams ------------------------------------ */
+.lineup.many { gap: 8px; }
+.lineup.many .lu { min-width: 130px; padding: 8px 12px; }
+.lineup.many .luName { font-size: clamp(18px, 3vmin, 38px); }
+#revRows.compact { max-height: 52vh; overflow: auto; gap: 4px !important; }
+#revRows.compact .panel { padding: 6px 12px !important; }
+#revRows.compact .d3 { font-size: clamp(16px, 2.4vmin, 28px); }
+.standings { max-height: 44vh; overflow: auto; }
+
+/* --- singer announcement for five to ten teams ---------------------------------- */
+.annRows.many { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 6vw; row-gap: clamp(4px, 1.2vh, 14px); }
+.annRows.many .annName { font-size: clamp(26px, 7vmin, 92px); white-space: nowrap; }
+.annRows.many .annTeam { font-size: clamp(10px, 1.5vmin, 18px); }
+
+/* --- search results without artwork (LRCLIB) ------------------------------------ */
+.result .noart {
+  width: 52px; height: 52px; flex: 0 0 auto; display: flex; align-items: center; justify-content: center;
+  background: var(--line); color: var(--acid); font-family: var(--display); font-size: 26px; text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .liveGrid.video { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .teamSlots.many { grid-template-columns: repeat(2, 1fr); }
+  .annRows.many { grid-template-columns: 1fr; }
+}
+.arena.list .lane .fill { background: linear-gradient(90deg, color-mix(in srgb, var(--c) 30%, transparent), var(--c)); }

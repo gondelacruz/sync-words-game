@@ -1,0 +1,646 @@
+# Español. Format: Artist | Title | Year
+
+# --- clásicos ---
+Julio Iglesias | Me Olvidé de Vivir | 1978
+Julio Iglesias | Soy un Truhán, Soy un Señor | 1978
+Julio Iglesias | Hey! | 1980
+Julio Iglesias | La Vida Sigue Igual | 1969
+Nino Bravo | Libre | 1972
+Nino Bravo | Un Beso y una Flor | 1972
+Nino Bravo | América, América | 1973
+Camilo Sesto | Vivir Así Es Morir de Amor | 1978
+Camilo Sesto | Perdóname | 1980
+Camilo Sesto | Algo de Mí | 1972
+Raphael | Mi Gran Noche | 1967
+Raphael | Escándalo | 1992
+Raphael | Yo Soy Aquel | 1966
+Rocío Jurado | Como Una Ola | 1981
+Rocío Dúrcal | La Gata Bajo la Lluvia | 1981
+Rocío Dúrcal | Amor Eterno | 1984
+José Luis Perales | Y Cómo Es Él | 1982
+Joan Manuel Serrat | Mediterráneo | 1971
+Joan Manuel Serrat | Lucía | 1971
+Los Brincos | Flamenco | 1964
+Karina | En un Mundo Nuevo | 1971
+Massiel | La, La, La | 1968
+Mocedades | Eres Tú | 1973
+Los Diablos | Un Rayo de Sol | 1970
+Fórmula V | Eva María | 1973
+Georgie Dann | El Chiringuito | 1988
+Georgie Dann | Macumba | 1985
+Tino Casal | Eloise | 1987
+Mecano | Hijo de la Luna | 1986
+Mecano | La Fuerza del Destino | 1988
+Mecano | Me Colé en una Fiesta | 1982
+Mecano | Cruz de Navajas | 1986
+Mecano | Me Cuesta Tanto Olvidarte | 1986
+Mecano | Aire | 1988
+Mecano | Hoy No Me Puedo Levantar | 1981
+Mecano | Una Rosa es una Rosa | 1991
+Mecano | Maquillaje | 1982
+Mecano | Barco a Venus | 1983
+Alaska y Dinarama | A Quién Le Importa | 1986
+Alaska y Dinarama | Ni Tú Ni Nadie | 1985
+Radio Futura | Escuela de Calor | 1984
+Hombres G | Devuélveme a Mi Chica | 1985
+Hombres G | Venezia | 1985
+Hombres G | Te Quiero | 1990
+Hombres G | Marta Tiene un Marcapasos | 1986
+Hombres G | Voy a Pasármelo Bien | 1989
+Los Secretos | Déjame | 1981
+Nacha Pop | La Chica de Ayer | 1980
+Duncan Dhu | En Algún Lugar | 1986
+Duncan Dhu | Cien Gaviotas | 1986
+El Último de la Fila | Insurrección | 1988
+Loquillo | Cadillac Solitario | 1983
+La Unión | Lobo Hombre en París | 1984
+Los Rodríguez | Sin Documentos | 1993
+Los Rodríguez | Mucho Mejor | 1991
+Héroes del Silencio | Entre Dos Tierras | 1990
+Héroes del Silencio | Maldito Duende | 1990
+Héroes del Silencio | La Chispa Adecuada | 1993
+Enrique Bunbury | Lady Blue | 2008
+Barricada | Bahía de Pasaia | 1987
+Extremoduro | So Payaso | 1996
+Extremoduro | La Vereda de la Puerta de Atrás | 1989
+Marea | Marea (Hoy No) | 2000
+Fito & Fitipaldis | Soldadito Marinero | 2003
+Fito & Fitipaldis | Por la Boca Vive el Pez | 2006
+Fito & Fitipaldis | Me Equivocaría Otra Vez | 2009
+Platero y Tú | Hay Poco Rock & Roll | 1994
+Los Suaves | Dolores Se Llamaba Lola | 1984
+Siniestro Total | Bailaré Sobre Tu Tumba | 1982
+Tequila | Salta | 1978
+Miguel Ríos | Himno de la Alegría | 1970
+Miguel Ríos | Santa Lucía | 1980
+Ana Belén & Víctor Manuel | La Puerta de Alcalá | 1986
+Ana Torroja | Duende | 1997
+Joaquín Sabina | 19 Días y 500 Noches | 1999
+Joaquín Sabina | Y Nos Dieron las Diez | 1992
+Joaquín Sabina | Contigo | 1996
+Joaquín Sabina | Calle Melancolía | 1980
+Joaquín Sabina | Pongamos que Hablo de Madrid | 1980
+Alejandro Sanz | Corazón Partío | 1997
+Alejandro Sanz | Amiga Mía | 1997
+Alejandro Sanz | Y Si Fuera Ella | 1997
+Alejandro Sanz | Mi Soledad y Yo | 1995
+Alejandro Sanz | Cuando Nadie Me Ve | 2000
+Alejandro Sanz | El Alma al Aire | 2000
+Alejandro Sanz | No Es lo Mismo | 2003
+Alejandro Sanz | Viviendo Deprisa | 1991
+Shakira | La Tortura | 2005
+Shakira | Ojos Así | 1998
+Shakira | Chantaje | 2016
+Shakira | Loca | 2010
+Shakira | Estoy Aquí | 1995
+Shakira | Dónde Están los Ladrones | 1998
+Shakira | Suerte | 2001
+Shakira | Te Felicito | 2022
+Shakira | Antología | 1995
+Shakira | Pies Descalzos, Sueños Blancos | 1996
+Shakira | Inevitable | 1998
+Shakira | Me Enamoré | 2017
+Shakira | Clandestino | 2018
+Shakira | Soltera | 2024
+Enrique Iglesias | Bailando | 2014
+Enrique Iglesias | Héroe | 2002
+Enrique Iglesias | Experiencia Religiosa | 1995
+Enrique Iglesias | Si Tú Te Vas | 1995
+Enrique Iglesias | Nunca Te Olvidaré | 1999
+Enrique Iglesias | Cuando Me Enamoro | 2010
+Enrique Iglesias | Duele el Corazón | 2016
+Enrique Iglesias | Súbeme la Radio | 2017
+Enrique Iglesias | El Baño | 2018
+Ricky Martin | María | 1995
+Ricky Martin | La Copa de la Vida | 1998
+Ricky Martin | Vente Pa' Ca | 2016
+Ricky Martin | Tu Recuerdo | 2006
+Ricky Martin | La Mordidita | 2015
+Ricky Martin | Pégate | 2006
+Ricky Martin | Vuelve | 1998
+Ricky Martin | Fuego de Noche, Nieve de Día | 1995
+Chayanne | Torero | 2002
+Chayanne | Salomé | 1999
+Chayanne | Tiempo de Vals | 1990
+Chayanne | Dejaría Todo | 1998
+Chayanne | Provócame | 1992
+Luis Miguel | La Incondicional | 1989
+Luis Miguel | Ahora Te Puedes Marchar | 1987
+Luis Miguel | Culpable o No | 1988
+Luis Miguel | Suave | 1993
+Luis Miguel | Hasta Que Me Olvides | 1993
+Luis Miguel | Cuando Calienta el Sol | 1988
+Luis Miguel | Sabor a Mí | 1997
+Luis Miguel | Decídete | 1982
+Juan Gabriel | Querida | 1984
+Juan Gabriel | Hasta Que Te Conocí | 1986
+Juan Gabriel | Amor Eterno | 1990
+Juan Gabriel | Así Fue | 1984
+Juan Gabriel | Abrázame Muy Fuerte | 2000
+Vicente Fernández | Volver, Volver | 1972
+Vicente Fernández | El Rey | 1976
+Vicente Fernández | Mujeres Divinas | 1987
+Vicente Fernández | Hermoso Cariño | 1976
+José José | El Triste | 1970
+José José | Almohada | 1978
+José José | Lo Dudo | 1978
+Marco Antonio Solís | Si No Te Hubieras Ido | 1998
+Los Bukis | Tu Cárcel | 1987
+Los Temerarios | Te Quiero | 1992
+Maná | Rayando el Sol | 1990
+Maná | Oye Mi Amor | 1992
+Maná | Clavado en un Bar | 1997
+Maná | En el Muelle de San Blas | 1997
+Maná | Vivir Sin Aire | 1992
+Maná | Labios Compartidos | 2006
+Maná | Mariposa Traicionera | 2002
+Maná | ¿Dónde Jugarán los Niños? | 1992
+Maná | Te Lloré un Río | 1992
+Maná | Corazón Espinado | 1999
+Maná | Eres Mi Religión | 2002
+Maná | Bendita Tu Luz | 2006
+Maná | El Verdadero Amor Perdona | 2011
+Café Tacvba | Eres | 2003
+Café Tacvba | Las Flores | 1994
+Café Tacvba | La Ingrata | 1994
+Caifanes | La Célula Que Explota | 1990
+Caifanes | Afuera | 1994
+Molotov | Puto | 1997
+El Tri | Triste Canción | 1985
+Soda Stereo | De Música Ligera | 1990
+Soda Stereo | Persiana Americana | 1986
+Soda Stereo | Cuando Pase el Temblor | 1985
+Soda Stereo | En la Ciudad de la Furia | 1988
+Soda Stereo | Nada Personal | 1985
+Soda Stereo | Prófugos | 1986
+Soda Stereo | Te Para Tres | 1990
+Soda Stereo | Zoom | 1995
+Gustavo Cerati | Crimen | 2006
+Gustavo Cerati | Puente | 1999
+Los Enanitos Verdes | Lamento Boliviano | 1994
+Los Enanitos Verdes | La Muralla Verde | 1986
+Los Prisioneros | El Baile de los que Sobran | 1986
+Los Prisioneros | Tren al Sur | 1990
+Los Fabulosos Cadillacs | Matador | 1993
+Los Fabulosos Cadillacs | Vasos Vacíos | 1993
+Los Auténticos Decadentes | La Guitarra | 1995
+Los Pericos | Runaway | 1994
+Charly García | Demoliendo Hoteles | 1984
+Fito Páez | Mariposa Tecknicolor | 1994
+Fito Páez | A Rodar Mi Vida | 1990
+Andrés Calamaro | Flaca | 1997
+Andrés Calamaro | Crímenes Perfectos | 1999
+Andrés Calamaro | Paloma | 1997
+Los Abuelos de la Nada | Mil Horas | 1983
+Bersuit Vergarabat | Mi Caramelo | 2004
+Vilma Palma e Vampiros | La Pachanga | 1992
+Aterciopelados | Bolero Falaz | 1995
+La Ley | Mentira | 2000
+La Ley | El Duelo | 1995
+La Ley | Día Cero | 2000
+Jaguares | Te Lo Pido por Favor | 1999
+Juanes | La Camisa Negra | 2004
+Juanes | A Dios le Pido | 2002
+Juanes | Es por Ti | 2002
+Juanes | Me Enamora | 2007
+Juanes | Fotografía | 2002
+Juanes | Volverte a Ver | 2004
+Juanes | Mala Gente | 2002
+Juanes | La Paga | 2002
+Juanes | Nada Valgo Sin Tu Amor | 2004
+Carlos Vives | La Bicicleta | 2016
+Carlos Vives | La Gota Fría | 1993
+Carlos Vives | Fruta Fresca | 1999
+Carlos Vives | Volví a Nacer | 2012
+Carlos Vives | Robarte un Beso | 2017
+Carlos Vives | Pa' Mayté | 1995
+Fonseca | Te Mando Flores | 2005
+Jesse & Joy | ¡Corre! | 2011
+Jesse & Joy | Espacio Sideral | 2006
+Jesse & Joy | Dueles | 2015
+Julieta Venegas | Me Voy | 2006
+Julieta Venegas | Andar Conmigo | 2004
+Julieta Venegas | Limón y Sal | 2006
+Julieta Venegas | Lento | 2003
+Natalia Lafourcade | Hasta la Raíz | 2015
+Natalia Lafourcade | En el 2000 | 2003
+Natalia Lafourcade | Mi Tierra Veracruzana | 2017
+Ha*Ash | Lo Aprendí de Ti | 2011
+Ha*Ash | Te Dejo en Libertad | 2011
+Reik | Yo Quisiera | 2005
+Reik | Me Duele Amarte | 2006
+Reik | Creo en Ti | 2006
+Camila | Todo Cambió | 2006
+Camila | Mientes | 2010
+Sin Bandera | Entra en Mi Vida | 2002
+Sin Bandera | Kilómetros | 2002
+Kalimba | Tocando Fondo | 2005
+Thalía | Amor a la Mexicana | 1997
+Thalía | Piel Morena | 1995
+Thalía | Arrasando | 2000
+Thalía | A Quién Le Importa | 2002
+Thalía | No Me Enseñaste | 2002
+Paulina Rubio | Y Yo Sigo Aquí | 2000
+Paulina Rubio | Ni Una Sola Palabra | 2006
+Paulina Rubio | Mío | 1992
+Paulina Rubio | Te Quise Tanto | 2004
+Paulina Rubio | Causa y Efecto | 2009
+Gloria Trevi | Todos Me Miran | 2006
+Gloria Trevi | Pelo Suelto | 1991
+Alejandra Guzmán | Hacer el Amor con Otro | 1991
+Alejandra Guzmán | Eternamente Bella | 1990
+Yuri | El Apagón | 1986
+Fey | Media Naranja | 1995
+Fey | Azúcar Amargo | 1996
+Timbiriche | Mírame | 1987
+RBD | Rebelde | 2004
+RBD | Sálvame | 2004
+RBD | Solo Quédate en Silencio | 2004
+RBD | Tras de Mí | 2004
+RBD | Nuestro Amor | 2005
+RBD | Ser o Parecer | 2006
+Belinda | Bella Traición | 2006
+Belinda | Ángel | 2003
+Selena | Como la Flor | 1992
+Selena | Bidi Bidi Bom Bom | 1994
+Selena | Amor Prohibido | 1994
+Selena | Si Una Vez | 1994
+Selena | Baila Esta Cumbia | 1990
+Selena | No Me Queda Más | 1994
+Gloria Estefan | Mi Tierra | 1993
+Gloria Estefan | Conga | 1985
+Gloria Estefan | Oye Mi Canto | 1989
+Gloria Estefan | Abriendo Puertas | 1995
+Celia Cruz | La Vida Es un Carnaval | 1998
+Celia Cruz | La Negra Tiene Tumbao | 2001
+Celia Cruz | Quimbara | 1974
+Marc Anthony | Vivir Mi Vida | 2013
+Marc Anthony | Valió la Pena | 2004
+Marc Anthony | Ahora Quién | 2006
+Marc Anthony | Tu Amor Me Hace Bien | 2004
+Marc Anthony | Hasta Que Te Conocí | 1993
+Marc Anthony | Flor Pálida | 2013
+Marc Anthony | Te Conozco Bien | 1995
+Marc Anthony | Y Hubo Alguien | 1999
+Marc Anthony | Contra la Corriente | 1997
+Marc Anthony | Pa'lla Voy | 2022
+Juan Luis Guerra | Burbujas de Amor | 1990
+Juan Luis Guerra | La Bilirrubina | 1990
+Juan Luis Guerra | Ojalá Que Llueva Café | 1989
+Juan Luis Guerra | Bachata Rosa | 1990
+Juan Luis Guerra | Visa para un Sueño | 1989
+Juan Luis Guerra | A Pedir Su Mano | 1990
+Juan Luis Guerra | La Travesía | 2004
+Juan Luis Guerra | Las Avispas | 1995
+Rubén Blades | Pedro Navaja | 1978
+Rubén Blades | Decisiones | 1984
+Héctor Lavoe | El Cantante | 1978
+Grupo Niche | Cali Pachanguero | 1984
+Joe Arroyo | La Rebelión | 1986
+Oscar D'León | Lloraré | 1975
+Gilberto Santa Rosa | Conciencia | 1995
+Victor Manuelle | Tengo Ganas | 2004
+Jerry Rivera | Amores Como el Nuestro | 1993
+Frankie Ruiz | Tu Con Él | 1985
+Aventura | Obsesión | 2002
+Aventura | Un Beso | 2002
+Aventura | El Perdedor | 2008
+Romeo Santos | Propuesta Indecente | 2013
+Romeo Santos | Eres Mía | 2014
+Romeo Santos | Imitadora | 2017
+Romeo Santos | Llévame Contigo | 2004
+Romeo Santos | Odio | 2014
+Prince Royce | Darte un Beso | 2013
+Prince Royce | Corazón Sin Cara | 2010
+Prince Royce | El Amor Que Perdimos | 2010
+Elvis Crespo | Suavemente | 1998
+Los Del Rio | Macarena | 1993
+King África | La Bomba | 1999
+Paffendorf | Be Cool | 2002
+Las Ketchup | Aserejé | 2002
+Chimo Bayo | Así Me Gusta a Mí | 1991
+Azúcar Moreno | Solo Se Vive una Vez | 1990
+Azúcar Moreno | Bandido | 1990
+Los Chunguitos | Me Quedo Contigo | 1980
+Los Chichos | Quiero Ser Libre | 1974
+Camarón de la Isla | Como el Agua | 1981
+Camarón de la Isla | La Leyenda del Tiempo | 1979
+Rosario Flores | Qué Bonito | 1992
+Rosario | Algo Contigo | 1996
+Lola Flores | Pena, Penita, Pena | 1953
+Gipsy Kings | Bamboleo | 1987
+Gipsy Kings | Volare | 1989
+Gipsy Kings | Djobi Djoba | 1987
+Ketama | No Estamos Lokos | 1995
+Ketama | Vengo de Borrachera | 1995
+Estopa | Como Camarón | 1999
+Estopa | La Raja de Tu Falda | 1999
+Estopa | Vino Tinto | 2004
+Estopa | Tu Calorro | 1999
+Estopa | Cacho a Cacho | 1999
+Estopa | Ya No Me Acuerdo | 2005
+Estopa | Pastillas de Freno | 1999
+Estopa | Me Falta el Aliento | 2004
+Estopa | Partiendo la Pana | 2002
+Melendi | Caminando por la Vida | 2005
+Melendi | Tu Jardín con Enanitos | 2012
+Melendi | Lágrimas Desordenadas | 2012
+Melendi | Con la Luna Llena | 2004
+Melendi | Un Violinista en Tu Tejado | 2010
+Melendi | Sin Noticias de Holanda | 2003
+Melendi | Cenizas en la Eternidad | 2008
+El Canto del Loco | Zapatillas | 2005
+El Canto del Loco | Peter Pan | 2005
+El Canto del Loco | Ya Nada Volverá a Ser Como Antes | 2002
+El Canto del Loco | La Madre de José | 2004
+El Canto del Loco | Una Foto en Blanco y Negro | 2005
+El Canto del Loco | Contigo | 2006
+El Canto del Loco | Volverá | 2007
+El Canto del Loco | Besos | 2005
+El Canto del Loco | Insoportable | 2003
+Dani Martín | Cero | 2012
+La Oreja de Van Gogh | Rosas | 2003
+La Oreja de Van Gogh | La Playa | 2000
+La Oreja de Van Gogh | Puedes Contar Conmigo | 2003
+La Oreja de Van Gogh | 20 de Enero | 2003
+La Oreja de Van Gogh | Cuídate | 2000
+La Oreja de Van Gogh | Muñeca de Trapo | 2006
+La Oreja de Van Gogh | El 28 | 1998
+La Oreja de Van Gogh | Soledad | 1998
+La Oreja de Van Gogh | Jueves | 2011
+La Oreja de Van Gogh | Deseos de Cosas Imposibles | 2003
+Amaral | Sin Ti No Soy Nada | 2002
+Amaral | Como Hablar | 2000
+Amaral | Días de Verano | 2005
+Amaral | Toda la Noche en la Calle | 2002
+Amaral | El Universo Sobre Mí | 2005
+Bebe | Malo | 2004
+Bebe | Ella | 2004
+Manu Chao | Me Gustas Tú | 2001
+Manu Chao | Clandestino | 1998
+Manu Chao | Bongo Bong | 1998
+Mano Negra | Mala Vida | 1988
+Jarabe de Palo | La Flaca | 1996
+Jarabe de Palo | Depende | 1998
+Jarabe de Palo | Bonito | 2003
+Macaco | Moving | 2009
+Carlos Baute | Colgando en Tus Manos | 2008
+David Bisbal | Ave María | 2002
+David Bisbal | Bulería | 2004
+David Bisbal | Dígale | 2002
+David Bisbal | Esclavo de Sus Besos | 2009
+David Bisbal | Lloraré las Penas | 2002
+David Bustamante | Devuélveme la Vida | 2002
+David Bustamante | Dos Hombres y un Destino | 2002
+Chenoa | Cuando Tú Vas | 2002
+Pablo Alborán | Solamente Tú | 2011
+Pablo Alborán | Saturno | 2017
+Pablo Alborán | Te He Echado de Menos | 2014
+Pablo Alborán | Por Fin | 2014
+Pablo Alborán | Déjame Vivir | 2013
+Pablo López | El Patio | 2017
+Vanesa Martín | Complicidad | 2014
+Malú | Blanco y Negro | 2010
+Malú | Aprendiz | 1998
+Rozalén | La Puerta Violeta | 2017
+Sergio Dalma | Bailar Pegados | 1991
+Sergio Dalma | Galilea | 1991
+Álex Ubago | Sin Miedo a Nada | 2001
+Álex Ubago | Aunque No Te Pueda Ver | 2001
+Antonio Orozco | Devuélveme la Vida | 2000
+Antonio Orozco | Estoy Hecho de Pedacitos de Ti | 2001
+Alejandro Fernández | Me Dediqué a Perderte | 2004
+Alejandro Fernández | Como Quien Pierde una Estrella | 1995
+Alejandro Fernández | Si Tú Supieras | 1997
+Laura Pausini | Se Fue | 1994
+Laura Pausini | La Soledad | 1994
+Laura Pausini | En Cambio No | 2008
+Eros Ramazzotti | Otra Como Tú | 1985
+Eros Ramazzotti | Cosas de la Vida | 1993
+Eros Ramazzotti | La Cosa Más Bella | 1996
+Nena Daconte | Tenía Tanto Que Darte | 2008
+Pereza | Princesas | 2005
+Pereza | Estrella Polar | 2007
+Despistaos | Cada Dos Minutos | 2008
+Andy & Lucas | Son de Amores | 2003
+Andy & Lucas | Tanto la Quería | 2004
+Hombres G | Sufre Mamón | 1985
+Marta Sánchez | Soy Yo | 1993
+Marta Sánchez | Desesperada | 1993
+Olé Olé | Voy a Mil | 1985
+Mónica Naranjo | Sobreviviré | 2000
+Mónica Naranjo | Desátame | 1997
+Rocío Jurado | Se Nos Rompió el Amor | 1979
+Isabel Pantoja | Así Fue | 1988
+Sara Montiel | Fumando Espero | 1957
+Luz Casal | Piensa en Mí | 1991
+Luz Casal | Te Dejé Marchar | 1989
+Revólver | El Día de la Fiesta | 1996
+Seguridad Social | Chiquilla | 1993
+Celtas Cortos | 20 de Abril | 1991
+Mägo de Oz | Fiesta Pagana | 2000
+Mägo de Oz | La Posada de los Muertos | 2000
+Ska-P | Cannabis | 1996
+Ska-P | El Vals del Obrero | 1996
+Los Planetas | Santos Que Yo Te Pinte | 2007
+Vetusta Morla | Copenhague | 2008
+Love of Lesbian | Club de Fans de John Boy | 2009
+Izal | Qué Bien | 2015
+Sidonie | Carreteras Infinitas | 2016
+Dorian | A Cualquier Otra Parte | 2007
+Carolina Durante | Cayetano | 2018
+Leiva | Sincericidio | 2016
+Rosalía | Malamente | 2018
+Rosalía | DESPECHÁ | 2022
+Rosalía | Con Altura | 2019
+Rosalía | Pienso en Tu Mirá | 2018
+Rosalía | Di Mi Nombre | 2018
+Rosalía | Bizcochito | 2022
+Rosalía | La Fama | 2021
+Rosalía | Saoko | 2022
+C. Tangana | Tú Me Dejaste de Querer | 2020
+C. Tangana | Ingobernable | 2021
+Aitana | Teléfono | 2018
+Aitana | Mon Amour (Remix) | 2020
+Aitana | Los Ángeles | 2023
+Aitana & Ana Guerra | Lo Malo | 2018
+Ana Mena | Música Ligera | 2021
+Lola Índigo | Ya No Quiero Na | 2018
+Quevedo | Columbia | 2023
+Bizarrap & Quevedo | Quevedo: Bzrp Music Sessions, Vol. 52 | 2022
+Morad | Pelele | 2022
+Rels B | A Mí | 2021
+Omar Montes | La Rubia | 2019
+Estopa | Tu Calorro | 1999
+Juan Magán | Bailando por Ahí | 2009
+Juan Magán | Mariah | 2012
+Dvicio | Paraíso | 2014
+Abraham Mateo | Loco Enamorado | 2017
+Sebastián Yatra | Tacones Rojos | 2021
+Sebastián Yatra | Traicionera | 2016
+Sebastián Yatra | Robarte un Beso | 2017
+Sebastián Yatra | Pareja del Año | 2021
+Sebastián Yatra | Dos Oruguitas | 2021
+Morat | Cómo Te Atreves | 2015
+Morat | Yo Contigo, Tú Conmigo | 2017
+Morat | Besos en Guerra | 2018
+Morat | Cuando Nadie Ve | 2018
+Morat | No Se Va | 2019
+Camilo | Vida de Rico | 2020
+Camilo | Tutu | 2019
+Camilo | Favorito | 2020
+Camilo | Índigo | 2022
+Mau y Ricky | Mi Mala | 2017
+Piso 21 | Me Llamas | 2016
+CNCO | Reggaetón Lento (Bailemos) | 2016
+CNCO | Hey DJ | 2017
+Luis Fonsi | Despacito | 2017
+Luis Fonsi | Échame la Culpa | 2017
+Luis Fonsi | No Me Doy por Vencido | 2008
+Luis Fonsi | Aquí Estoy Yo | 2008
+Daddy Yankee | Gasolina | 2004
+Daddy Yankee | Con Calma | 2019
+Daddy Yankee | Limbo | 2012
+Daddy Yankee | Dura | 2018
+Daddy Yankee | Rompe | 2005
+Daddy Yankee | Lo Que Pasó, Pasó | 2004
+Daddy Yankee | Shaky Shaky | 2016
+Daddy Yankee | Llamado de Emergencia | 2008
+Daddy Yankee | Pose | 2008
+Don Omar | Danza Kuduro | 2010
+Don Omar | Dile | 2003
+Don Omar | Salió el Sol | 2006
+Don Omar | Pobre Diabla | 2003
+Don Omar | Taboo | 2011
+Wisin & Yandel | Rakata | 2005
+Wisin & Yandel | Algo Me Gusta de Ti | 2012
+Wisin & Yandel | Abusadora | 2009
+Wisin & Yandel | Sexy Movimiento | 2007
+Tito El Bambino | El Amor | 2009
+Tito El Bambino | Sol, Playa y Arena | 2006
+Zion & Lennox | Otra Vez | 2016
+Calle 13 | Atrévete-te-te | 2005
+Calle 13 | Latinoamérica | 2011
+Ivy Queen | Quiero Bailar | 2003
+Nicky Jam | El Perdón | 2015
+Nicky Jam | Hasta el Amanecer | 2016
+Nicky Jam | X (Equis) | 2018
+Nicky Jam | Travesuras | 2014
+J Balvin | Mi Gente | 2017
+J Balvin | Ay Vamos | 2014
+J Balvin | Ginza | 2015
+J Balvin | 6 AM | 2014
+J Balvin | Safari | 2016
+J Balvin | Machika | 2018
+J Balvin | Rojo | 2020
+J Balvin & Bad Bunny | La Canción | 2019
+Maluma | Felices los 4 | 2017
+Maluma | Hawái | 2020
+Maluma | Borró Cassette | 2015
+Maluma | El Préstamo | 2018
+Maluma | Corazón | 2017
+Maluma | Cuatro Babys | 2016
+Ozuna | Taki Taki | 2018
+Ozuna | Te Boté | 2018
+Ozuna | Se Preparó | 2017
+Ozuna | Criminal | 2017
+Ozuna | Baila Baila Baila | 2019
+Anuel AA | China | 2019
+Anuel AA | Secreto | 2019
+Bad Bunny | Tití Me Preguntó | 2022
+Bad Bunny | Me Porto Bonito | 2022
+Bad Bunny | DÁKITI | 2020
+Bad Bunny | Callaíta | 2019
+Bad Bunny | Yo Perreo Sola | 2020
+Bad Bunny | Safaera | 2020
+Bad Bunny | Soy Peor | 2016
+Bad Bunny | Amorfoda | 2018
+Bad Bunny | Ojitos Lindos | 2022
+Bad Bunny | Moscow Mule | 2022
+Bad Bunny | Efecto | 2022
+Bad Bunny | Un Verano Sin Ti | 2022
+Bad Bunny | Monaco | 2023
+Bad Bunny | DtMF | 2025
+Bad Bunny | BAILE INoLVIDABLE | 2025
+Bad Bunny | NUEVAYoL | 2025
+Bad Bunny | Vete | 2019
+Bad Bunny | Si Veo a Tu Mamá | 2020
+Bad Bunny & J Balvin | Yo Le Llego | 2019
+Karol G | Provenza | 2022
+Karol G | TQG | 2023
+Karol G | Tusa | 2019
+Karol G | Bichota | 2020
+Karol G | MAMIII | 2022
+Karol G | Si Antes Te Hubiera Conocido | 2024
+Karol G | Ahora Me Llama | 2017
+Karol G | El Makinon | 2021
+Karol G | Mientras Me Curo del Cora | 2023
+Karol G | Amargura | 2023
+Rauw Alejandro | Todo de Ti | 2021
+Rauw Alejandro | Tattoo | 2020
+Rauw Alejandro | Desesperados | 2021
+Rauw Alejandro | Punto 40 | 2022
+Myke Towers | LALA | 2023
+Myke Towers | Diosa | 2020
+Feid | Normal | 2022
+Feid | Luna | 2023
+Feid | Classy 101 | 2023
+Young Miko | Lisa | 2023
+Eslabon Armado | Ella Baila Sola | 2023
+Grupo Frontera | un x100to | 2023
+Grupo Frontera | No Se Va | 2022
+Fuerza Regida | TQM | 2023
+Natanael Cano | AMG | 2022
+Xavi | La Diabla | 2024
+Tito Double P | Dembow | 2024
+Junior H | Y Lloro | 2023
+Becky G | Mayores | 2017
+Becky G | Sin Pijama | 2018
+Becky G | Shower | 2014
+Natti Natasha | Criminal | 2017
+Farruko | Pepas | 2021
+Farruko | Chillax | 2015
+Manuel Turizo | La Bachata | 2022
+Manuel Turizo | Una Lady Como Tú | 2016
+Sech | Otro Trago | 2019
+Jhay Cortez | Christian Dior | 2019
+Lunay | Soltera | 2019
+Tini | Miénteme | 2022
+Tini | Cupido | 2023
+Emilia | Los Del Espacio | 2023
+Nicki Nicole | Wapo Traketero | 2019
+Duki | She Don't Give a FO | 2017
+Bizarrap & Shakira | Shakira: Bzrp Music Sessions, Vol. 53 | 2023
+María Becerra | Automático | 2021
+Lali | Disciplina | 2022
+Ricardo Arjona | Historia de Taxi | 1994
+Ricardo Arjona | Señora de las Cuatro Décadas | 1994
+Ricardo Arjona | El Problema | 2002
+Ricardo Arjona | Te Conozco | 1994
+Ricardo Arjona | Mujeres | 1990
+Ricardo Arjona | Fuiste Tú | 2011
+Ricardo Arjona | Dime Que No | 1998
+Franco De Vita | Te Amo | 1988
+Franco De Vita | Tú de Qué Vas | 1996
+Ricardo Montaner | Me Va a Extrañar | 1992
+Ricardo Montaner | Tan Enamorados | 1990
+Cristian Castro | Azul | 2001
+Cristian Castro | No Podrás | 1993
+Emmanuel | Toda la Vida | 1986
+Emmanuel | Bella Señora | 1988
+Pedro Fernández | Si Te Vas | 1995
+Los Ángeles Azules | Nunca Es Suficiente | 2018
+Los Ángeles Azules | Cómo Te Voy a Olvidar | 1996
+Ana Gabriel | Simplemente Amigos | 1990
+Rocío Dúrcal | Costumbres | 1978
+Chavela Vargas | La Llorona | 1994
+Buena Vista Social Club | Chan Chan | 1997
+Los Panchos | Bésame Mucho | 1947
+Trío Los Panchos | Sabor a Mí | 1959
+Lucho Barrios | Señora | 1960
+Joaquín Sabina | Princesa | 1984
+Joan Manuel Serrat | Cantares | 1969
+Mocedades | Amor de Hombre | 1982
+Los Pecos | Esperando Nacer | 1980
+Los Payasos de la Tele | Hola Don Pepito | 1972
+Rocío Jurado | Como Yo Te Amo | 1979

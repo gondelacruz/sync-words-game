@@ -1,4 +1,8 @@
 // ---------------------------------------------------------------------------
+// [SPOTIFY — KEPT FOR ROLLBACK] Not used while the music source is YouTube.
+// Nothing here was removed; host.js only calls it when MUSIC === 'spotify'.
+// To go back to Spotify see README → "Revert to Spotify".
+//
 // Spotify PKCE auth + Web Playback SDK wrapper.
 // PKCE means no client secret, so this is safe to run entirely in the browser.
 // ---------------------------------------------------------------------------
@@ -148,7 +152,16 @@ export function createPlayer(clientId, { onReady, onState, onError } = {}) {
     player.connect();
   };
   if (window.Spotify) boot();
-  else window.onSpotifyWebPlaybackSDKReady = boot;
+  else {
+    window.onSpotifyWebPlaybackSDKReady = boot;
+    // The SDK used to be a <script> tag in host.html; it now loads only in Spotify mode.
+    const SDK = 'https://sdk.scdn.co/spotify-player.js';
+    if (!document.querySelector(`script[src="${SDK}"]`)) {
+      const tag = document.createElement('script');
+      tag.src = SDK;
+      document.head.appendChild(tag);
+    }
+  }
 }
 
 /** Must be called from inside a real click for iOS/Safari autoplay rules. */

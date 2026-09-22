@@ -12,7 +12,7 @@
 <main class="stage" style="justify-content:center;align-items:center;text-align:center;gap:clamp(18px,3vmin,40px)">
 
   <div>
-    <div class="label" style="margin-bottom:.7em">Up to four teams. One song. No mercy.</div>
+    <div class="label" style="margin-bottom:.7em">Up to ten teams. One song. No mercy.</div>
     <h1 class="d1" style="letter-spacing:.02em">SYN<span class="acid">G</span></h1>
     <p class="muted" style="max-width:36ch;margin:14px auto 0;font-size:15px;line-height:1.5">
       The laptop plays a song. One singer from each team sings into the team's phone.
@@ -60,7 +60,7 @@
     if (!res || !res.ok) return (err.textContent = 'No room with that code');
     const body = await res.json().catch(() => ({}));
     if (body.phase && body.phase !== 'setup') return (err.textContent = 'That game has already started');
-    if (body.teams >= 4) return (err.textContent = 'That room already has four teams');
+    if (body.teams >= (body.max || 10)) return (err.textContent = 'That room is full (ten teams)');
     try { localStorage.setItem('syng:team', JSON.stringify(name.value.trim())); } catch {}
     location.href = `/play.html?code=${c}&team=${encodeURIComponent(name.value.trim())}`;
   });

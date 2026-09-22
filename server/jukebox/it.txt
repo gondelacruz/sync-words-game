@@ -1,0 +1,162 @@
+# Italiano. Format: Artist | Title | Year
+Domenico Modugno | Nel blu dipinto di blu | 1958
+Måneskin | Zitti e buoni | 2021
+Måneskin | Coraline | 2021
+Måneskin | Torna a casa | 2017
+Måneskin | Beggin' | 2017
+Laura Pausini | La solitudine | 1993
+Laura Pausini | Strani amori | 1994
+Laura Pausini | Non c'è | 1993
+Laura Pausini | Tra te e il mare | 2000
+Laura Pausini | Incancellabile | 1996
+Laura Pausini | Io canto | 2006
+Eros Ramazzotti | Più bella cosa | 1996
+Eros Ramazzotti | Adesso tu | 1986
+Eros Ramazzotti | Terra promessa | 1984
+Eros Ramazzotti | Cose della vita | 1993
+Eros Ramazzotti | Se bastasse una canzone | 1990
+Eros Ramazzotti | Un'emozione per sempre | 2003
+Adriano Celentano | Azzurro | 1968
+Adriano Celentano | Il ragazzo della via Gluck | 1966
+Adriano Celentano | Una carezza in un pugno | 1968
+Adriano Celentano | Prisencolinensinainciusol | 1972
+Toto Cutugno | L'italiano | 1983
+Umberto Tozzi | Ti amo | 1977
+Umberto Tozzi | Gloria | 1979
+Umberto Tozzi | Tu | 1978
+Lucio Dalla | Caruso | 1986
+Lucio Dalla | Attenti al lupo | 1990
+Lucio Dalla | L'anno che verrà | 1979
+Lucio Battisti | Emozioni | 1970
+Lucio Battisti | La canzone del sole | 1971
+Lucio Battisti | Il mio canto libero | 1972
+Lucio Battisti | Acqua azzurra, acqua chiara | 1969
+Andrea Bocelli | Con te partirò | 1995
+Andrea Bocelli | Vivo per lei | 1995
+Vasco Rossi | Albachiara | 1979
+Vasco Rossi | Vita spericolata | 1983
+Vasco Rossi | Sally | 1996
+Vasco Rossi | Una canzone per te | 1983
+Vasco Rossi | Siamo solo noi | 1981
+Vasco Rossi | Senza parole | 1994
+Ligabue | Certe notti | 1995
+Ligabue | Balliamo sul mondo | 1990
+Ligabue | Urlando contro il cielo | 1991
+Jovanotti | L'ombelico del mondo | 1995
+Jovanotti | A te | 2008
+Jovanotti | Ragazzo fortunato | 1992
+Jovanotti | Baciami ancora | 2010
+Jovanotti | Penso positivo | 1994
+Jovanotti | Il più grande spettacolo dopo il Big Bang | 2011
+Tiziano Ferro | Perdono | 2001
+Tiziano Ferro | Xdono | 2001
+Tiziano Ferro | Sere nere | 2003
+Tiziano Ferro | Non me lo so spiegare | 2003
+Tiziano Ferro | Ti scatterò una foto | 2007
+Tiziano Ferro | La differenza tra me e te | 2011
+Tiziano Ferro | Rosso relativo | 2001
+Mahmood | Soldi | 2019
+Mahmood | Tuta gold | 2024
+Mahmood & Blanco | Brividi | 2022
+Blanco | Notti in bianco | 2021
+Blanco | Mi fai impazzire | 2021
+Raffaella Carrà | A far l'amore comincia tu | 1976
+Raffaella Carrà | Tanti auguri | 1978
+Raffaella Carrà | Rumore | 1974
+Raffaella Carrà | Fiesta | 1977
+Al Bano & Romina Power | Felicità | 1982
+Al Bano & Romina Power | Sharazan | 1981
+Al Bano & Romina Power | Ci sarà | 1984
+Ricchi E Poveri | Sarà perché ti amo | 1981
+Ricchi E Poveri | Mamma Maria | 1982
+Ricchi E Poveri | Se m'innamoro | 1985
+Mina | Parole parole | 1972
+Mina | Se telefonando | 1966
+Mina | Grande grande grande | 1971
+Mia Martini | Almeno tu nell'universo | 1989
+Gianna Nannini | Bello e impossibile | 1986
+Gianna Nannini | Meravigliosa creatura | 2004
+Gianna Nannini | Notti magiche | 1990
+Zucchero | Senza una donna | 1987
+Zucchero | Diamante | 1989
+Zucchero | Baila (Sexy Thing) | 2001
+Zucchero | Il volo | 1995
+Zucchero | Così celeste | 1995
+Pooh | Pensiero | 1971
+Pooh | Uomini soli | 1990
+Pooh | Piccola Katy | 1968
+Claudio Baglioni | Questo piccolo grande amore | 1972
+Claudio Baglioni | Strada facendo | 1981
+Renato Zero | Il cielo | 1977
+Renato Zero | I migliori anni della nostra vita | 1995
+Gino Paoli | Il cielo in una stanza | 1960
+Fabrizio De André | Bocca di rosa | 1967
+Franco Battiato | La cura | 1996
+Franco Battiato | Centro di gravità permanente | 1981
+Riccardo Cocciante | Margherita | 1976
+Riccardo Cocciante | Bella senz'anima | 1974
+Marco Masini | T'innamorerai | 1993
+Biagio Antonacci | Iris (tra le tue poesie) | 1996
+Biagio Antonacci | Sognami | 2001
+Nek | Laura non c'è | 1997
+Nek | Se io non avessi te | 1998
+883 | Hanno ucciso l'Uomo Ragno | 1992
+883 | Nord sud ovest est | 1993
+883 | Come mai | 1993
+883 | Una canzone d'amore | 1993
+883 | Tieni il tempo | 1995
+883 | Gli anni | 1995
+Max Pezzali | Sei fantastica | 2004
+Eiffel 65 | Una notte e forse mai più | 2001
+Gigi D'Agostino | L'amour toujours | 1999
+Gigi D'Alessio | Non dirgli mai | 1999
+Negramaro | Estate | 2005
+Negramaro | Solo 3 minuti | 2004
+Negramaro | Meraviglioso | 2008
+Modà | Arriverà | 2011
+Modà | Come un pittore | 2011
+Emma | Amami | 2012
+Emma | Non è l'inferno | 2012
+Alessandra Amoroso | Immobile | 2009
+Marco Mengoni | L'essenziale | 2013
+Marco Mengoni | Guerriero | 2014
+Marco Mengoni | Due vite | 2023
+Elisa | Luce (tramonti a nord est) | 2001
+Elisa | Gli ostacoli del cuore | 2006
+Elodie | Andromeda | 2020
+Annalisa | Mon Amour | 2023
+Annalisa | Bellissima | 2022
+Angelina Mango | La noia | 2024
+Irama | La genesi del tuo colore | 2021
+Ultimo | Alba | 2023
+Ultimo | Pianeti | 2018
+Ultimo | I tuoi particolari | 2019
+Sfera Ebbasta | Tesla | 2018
+Sfera Ebbasta | Rockstar | 2018
+Ghali | Cara Italia | 2018
+Fedez | Magnifico | 2014
+J-Ax & Fedez | Senza pagare | 2017
+Fabio Rovazzi | Andiamo a comandare | 2016
+Baby K | Roma-Bangkok | 2015
+Loredana Bertè | Non sono una signora | 1982
+Lo Stato Sociale | Una vita in vacanza | 2018
+Francesco Gabbani | Occidentali's Karma | 2017
+Diodato | Fai rumore | 2020
+Coma_Cose | Fiamme negli occhi | 2021
+La Rappresentante di Lista | Ciao ciao | 2022
+Tananai | Tango | 2023
+Geolier | I p' me, tu p' te | 2024
+Olly | Balorda nostalgia | 2025
+Achille Lauro | Rolls Royce | 2020
+Colapesce & Dimartino | Musica leggerissima | 2021
+Cesare Cremonini | Poetica | 2017
+Lunapop | 50 Special | 1999
+Tiromancino | Due destini | 2000
+Articolo 31 | Domani smetto | 2002
+Umberto Tozzi & Raf | Gente di mare | 1987
+Raf | Self Control | 1984
+Righeira | Vamos a la playa | 1983
+Sabrina Salerno | Siamo donne | 1991
+Mietta | Vattene amore | 1990
+Rino Gaetano | Ma il cielo è sempre più blu | 1975
+Rino Gaetano | Gianna | 1978

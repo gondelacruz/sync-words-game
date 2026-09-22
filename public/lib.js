@@ -2,8 +2,19 @@
 
 export const $ = (sel, root = document) => root.querySelector(sel);
 export const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
-export const PLAYER_COLORS = ['#ff2e63', '#08f7fe', '#ffe600', '#b14eff', '#00ff87', '#ff8a00'];
+// Ten teams, ten colours that stay apart on a dark screen.
+export const PLAYER_COLORS = [
+  '#ff2e63', '#08f7fe', '#ffe600', '#b14eff', '#00ff87',
+  '#ff8a00', '#4d7cff', '#ff7ad9', '#c6ff3d', '#f1efe7',
+];
 export const colorFor = (slot) => PLAYER_COLORS[slot % PLAYER_COLORS.length];
+
+/** 1 -> "1st", 2 -> "2nd", 11 -> "11th" */
+export function ordinal(n) {
+  const v = n % 100;
+  const suf = v >= 11 && v <= 13 ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th');
+  return n + suf;
+}
 
 export function connect({ onOpen, onMessage, onDrop }) {
   const url = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/ws';

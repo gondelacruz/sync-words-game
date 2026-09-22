@@ -1,12 +1,23 @@
 // ---------------------------------------------------------------------------
-// SYNG — the host screen (laptop). Owns Spotify playback and the big display.
+// SYNG — the host screen (laptop). Owns the music and the big display.
+//
+// MUSIC SOURCES
+//   youtube (default) — an embedded YouTube player (public/youtube.js); the
+//                       server finds the video (server/youtube.js).
+//   spotify           — KEPT FOR ROLLBACK, fully working: Spotify Web Playback
+//                       SDK (public/spotify.js). Every Spotify-only branch in
+//                       this file is marked [SPOTIFY]. To revert: README →
+//                       "Revert to Spotify" (set MUSIC_SOURCE=spotify, or open
+//                       the host with ?music=spotify).
+//   manual            — ?manual=1: the host plays the song from anywhere.
 // ---------------------------------------------------------------------------
 
-import { $, $$, colorFor, connect, confetti, shake } from '/lib.js';
-import * as sp from '/spotify.js';
+import { $, $$, colorFor, connect, confetti, shake, ordinal } from '/lib.js';
+import * as sp from '/spotify.js';        // [SPOTIFY — kept for rollback]
+import * as yt from '/youtube.js';
 
 const el = {
-  spotifyChip: $('#spotifyChip'), teamsChip: $('#teamsChip'), roundChip: $('#roundChip'), quitBtn: $('#quitBtn'),
+  musicChip: $('#musicChip'), teamsChip: $('#teamsChip'), roundChip: $('#roundChip'), quitBtn: $('#quitBtn'),
   codeBox: $('#codeBox'), joinUrl: $('#joinUrl'), teamSlots: $('#teamSlots'),
   needSpotify: $('#needSpotify'), loginBtn: $('#loginBtn'), cfgWarn: $('#cfgWarn'),
   rounds: $('#rounds'), langWrap: $('#langWrap'), langDD: $('#langDD'), langSummary: $('#langSummary'), langMenu: $('#langMenu'),
@@ -15,6 +26,9 @@ const el = {
   q: $('#q'), results: $('#results'), searchHint: $('#searchHint'),
   singSong: $('#singSong'), singerCols: $('#singerCols'), lockBtn: $('#lockBtn'), randAllBtn: $('#randAllBtn'),
   armArt: $('#armArt'), armTitle: $('#armTitle'), armArtist: $('#armArtist'), armWindow: $('#armWindow'),
+  ytSlotArmed: $('#ytSlotArmed'), ytSlotLive: $('#ytSlotLive'), liveGrid: $('#liveGrid'), ytNote: $('#ytNote'),
+  videoBar: $('#videoBar'), videoWhat: $('#videoWhat'), nextVideoBtn: $('#nextVideoBtn'), ytSearchLink: $('#ytSearchLink'),
+  pasteForm: $('#pasteForm'), pasteUrl: $('#pasteUrl'), videoMsg: $('#videoMsg'),
   lineup: $('#lineup'), goBtn: $('#goBtn'), reannBtn: $('#reannBtn'), armHint: $('#armHint'),
   liveTitle: $('#liveTitle'), liveArtist: $('#liveArtist'), clock: $('#clock'), timeBar: $('#timeBar'), arena: $('#arena'), stopBtn: $('#stopBtn'),
   revStamp: $('#revStamp'), revRows: $('#revRows'), revLyrics: $('#revLyrics'), nextBtn: $('#nextBtn'),
@@ -28,9 +42,14 @@ const el = {
   },
 };
 
-// Manual mode: no Spotify at all. You play the song from wherever you like and
+// Manual mode: SYNG plays nothing. You play the song from wherever you like and
 // SYNG just runs the clock. Lyrics still come from LRCLIB.
-const MANUAL = new URLSearchParams(location.search).has('manual');
+const QS = new URLSearchParams(location.search);
+const MANUAL = QS.has('manual');
+// 'youtube' | 'spotify' | 'manual' — decided at boot from ?manual, ?music= and the server's MUSIC_SOURCE.
+let MUSIC = MANUAL ? 'manual' : 'youtube';
+const usesYT = () => MUSIC === 'youtube';
+const usesSpotify = () => MUSIC === 'spotify';       // [SPOTIFY]
 const LANG_NAMES = {
   'en-US': 'English', 'es-ES': 'Spanish', 'pt-BR': 'Portuguese', 'fr-FR': 'French',
   'de-DE': 'German', 'it-IT': 'Italian', 'zh-CN': 'Chinese', 'ja-JP': 'Japanese',
@@ -50,7 +69,9 @@ const prefs = {
 if (!Array.isArray(prefs.langs) || !prefs.langs.length) prefs.langs = ['en'];
 function clampRounds(n) { return Math.min(30, Math.max(1, Math.round(Number(n) || 5))); }
 
-let clientId = '';
+let clientId = '';                 // [SPOTIFY]
+let ytStatus = null;
+let maxTeams = 10;
 let languages = [{ iso: 'en', name: 'English' }];
 let state = null;
 let net = null;
@@ -74,16 +95,30 @@ const teamById = (id) => state?.teams.find((t) => t.id === id);
 /* --- boot ---------------------------------------------------------------- */
 (async function boot() {
   const cfg = await fetch('/api/config').then((r) => r.json()).catch(() => ({}));
+  if (!MANUAL) MUSIC = ['youtube', 'spotify'].includes(QS.get('music')) ? QS.get('music') : (cfg.music === 'spotify' ? 'spotify' : 'youtube');
+  // Coming back from Spotify's login page means Spotify, whatever the default.
+  if (!MANUAL && QS.has('code')) MUSIC = 'spotify';
   clientId = cfg.spotifyClientId || '';
+  ytStatus = cfg.youtube || null;
+  maxTeams = cfg.maxTeams || 10;
   if (cfg.languages?.length) languages = cfg.languages;
-  if (!cfg.configured && !MANUAL) el.cfgWarn.classList.remove('hide');
+  if (usesSpotify() && !cfg.configured) el.cfgWarn.classList.remove('hide');
   buildSettings();
 
-  if (clientId && !MANUAL) {
+  if (usesYT()) {
+    yt.load({
+      onReady: () => { paintMusic(); render(); },
+      onEnded: () => { if (state?.phase === 'live') net.send({ t: 'host:ended' }); },
+      onError: onVideoError,
+      onBlocked: () => { el.liveArtist.textContent = 'Your browser blocked autoplay: click the video once to start it'; },
+    });
+  }
+  // [SPOTIFY — kept for rollback]
+  if (usesSpotify() && clientId) {
     await sp.completeLogin(clientId);
     if (sp.isLoggedIn()) startPlayer();
   }
-  paintSpotify();
+  paintMusic();
   if (MANUAL) {
     el.q.placeholder = 'Artist - Title, then hit "Use this title"';
     $('#manualGo').classList.remove('hide');
@@ -92,16 +127,17 @@ const teamById = (id) => state?.teams.find((t) => t.id === id);
   }
 
   net = connect({
-    onOpen: (api) => api.send({ t: 'host:hello', code: sessionStorage.getItem('syng:code') || undefined }),
+    onOpen: (api) => api.send({ t: 'host:hello', music: MUSIC, code: sessionStorage.getItem('syng:code') || undefined }),
     onMessage: handle,
     onDrop: () => { el.teamsChip.textContent = 'reconnecting…'; },
   });
 })();
 
+/* --- [SPOTIFY — kept for rollback] player ------------------------------------ */
 let sawPlayback = false;
 function startPlayer() {
   sp.createPlayer(clientId, {
-    onReady: () => { paintSpotify(); render(); },
+    onReady: () => { paintMusic(); render(); },
     onState: (st) => {
       if (!st) return;
       if (!st.paused) { sawPlayback = true; return; }
@@ -112,25 +148,42 @@ function startPlayer() {
       }
     },
     onError: (kind, msg) => {
-      paintSpotify();
-      if (kind === 'account_error') el.spotifyChip.textContent = 'Spotify Premium required';
+      paintMusic();
+      if (kind === 'account_error') el.musicChip.textContent = 'Spotify Premium required';
       else if (kind === 'authentication_error') sp.logout();
       console.warn('[spotify]', kind, msg);
     },
   });
 }
 
-function paintSpotify() {
+function paintMusic() {
   if (MANUAL) {
-    el.spotifyChip.textContent = 'Manual mode';
-    el.spotifyChip.classList.add('hot');
+    el.musicChip.textContent = 'Manual mode';
+    el.musicChip.classList.add('hot');
     el.needSpotify.classList.add('hide');
     return;
   }
+  if (usesYT()) {
+    const ready = yt.playerReady();
+    el.musicChip.textContent = ready ? 'YouTube: ready' : 'YouTube: loading…';
+    el.musicChip.classList.toggle('hot', ready);
+    el.needSpotify.classList.add('hide');
+    if (ytStatus) {
+      const note = !ytStatus.enabled
+        ? 'No YOUTUBE_API_KEY on the server: you will paste a YouTube link for each song (see README).'
+        : ytStatus.searchesLeft < 15
+          ? `${ytStatus.searchesLeft} YouTube searches left today (songs played before are free). Refills at ${new Date(ytStatus.resetsAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.`
+          : '';
+      el.ytNote.textContent = note;
+      el.ytNote.classList.toggle('hide', !note);
+    }
+    return;
+  }
+  // [SPOTIFY — kept for rollback]
   const inOk = sp.isLoggedIn();
   const ready = sp.playerReady();
-  el.spotifyChip.textContent = !inOk ? 'Spotify: offline' : ready ? 'Spotify: ready' : 'Spotify: waking…';
-  el.spotifyChip.classList.toggle('hot', ready);
+  el.musicChip.textContent = !inOk ? 'Spotify: offline' : ready ? 'Spotify: ready' : 'Spotify: waking…';
+  el.musicChip.classList.toggle('hot', ready);
   el.needSpotify.classList.toggle('hide', inOk);
 }
 el.loginBtn.addEventListener('click', () => clientId && sp.login(clientId));
@@ -198,7 +251,14 @@ function handle(msg) {
       startPlayback(msg.positionMs);
       break;
     case 'stop':
-      sp.pause();
+      stopMusic();
+      break;
+    case 'videoerror':
+      el.videoMsg.textContent = {
+        'bad-link': 'That does not look like a YouTube link.',
+        'not-found': 'YouTube says that video does not exist.',
+        'no-embed': 'That video does not allow playing outside YouTube. Try another upload.',
+      }[msg.reason] || 'That link did not work.';
       break;
     case 'nolyrics':
       el.searchHint.classList.remove('hide');
@@ -207,7 +267,7 @@ function handle(msg) {
   }
 }
 
-/* --- Spotify lookup for a jukebox song (random mode) ---------------------- */
+/* --- [SPOTIFY — kept for rollback] lookup for a jukebox song (random mode) ---- */
 const simplify = (t) => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
   .replace(/\s-\s.*$/, '').replace(/\(.*?\)|\[.*?\]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
 
@@ -231,8 +291,17 @@ async function resolveSong(song) {
 }
 
 /* --- playback ------------------------------------------------------------ */
+let posTimer = 0;
+function stopMusic() {
+  clearInterval(posTimer);
+  if (usesYT()) yt.stop();
+  if (usesSpotify()) { sawPlayback = false; sp.pause(); }                   // [SPOTIFY]
+}
+
 async function startPlayback(positionMs) {
+  if (usesYT()) return startYouTube(positionMs);
   if (MANUAL || !state.track?.uri) return net.send({ t: 'host:playing', positionMs: 0 });
+  // [SPOTIFY — kept for rollback] from here on
   sawPlayback = false;
   try {
     await sp.playTrack(clientId, state.track.uri, positionMs);
@@ -250,9 +319,51 @@ async function startPlayback(positionMs) {
   net.send({ t: 'host:playing', positionMs });
 }
 
+async function startYouTube(positionMs) {
+  const v = state.track?.video;
+  if (!v) return net.send({ t: 'host:abort' });
+  el.countOverlay.hidden = true;                      // nothing may cover a playing video
+  yt.attach(el.ytSlotLive);
+  try {
+    const at = await yt.play(v.id, positionMs);
+    el.liveArtist.textContent = state.track?.artist || '—';
+    net.send({ t: 'host:playing', positionMs: at.positionMs, durationMs: at.durationMs });
+  } catch (e) {
+    console.warn('[youtube]', e.message);
+    if (state?.phase === 'countdown' || state?.phase === 'live') net.send({ t: 'host:abort' });
+    return;
+  }
+  // Every few seconds, tell the server where the audio really is, so a video
+  // that buffered does not drift away from the lyric timing.
+  clearInterval(posTimer);
+  posTimer = setInterval(() => {
+    if (state?.phase !== 'live') return clearInterval(posTimer);
+    const p = yt.position();
+    if (p != null) net.send({ t: 'host:pos', positionMs: p });
+  }, 4000);
+}
+
+/** The player refused a video (removed, private, or embedding switched off). */
+function onVideoError(code) {
+  console.warn('[youtube] error', code);
+  if (code === 'api-blocked') {
+    el.musicChip.textContent = 'YouTube blocked';
+    el.musicChip.classList.remove('hot');
+    return;
+  }
+  if (state?.phase === 'live' || state?.phase === 'countdown') {
+    stopMusic();
+    net.send({ t: 'host:abort' });
+    return;
+  }
+  // Setting up: quietly move on to the next-best match.
+  if (state?.track?.video) net.send({ t: 'host:nextvideo' });
+}
+
 /* --- overlays ------------------------------------------------------------ */
 function runCountdown(ms) {
   el.announce.hidden = true;
+  if (usesYT()) { yt.stop(); yt.attach(null); }      // the preview must not keep playing
   el.countOverlay.hidden = false;
   const steps = ['3', '2', '1', 'SING'];
   const each = ms / steps.length;
@@ -273,43 +384,59 @@ function showAnnouncement(singers, roundNo) {
   if (!teams.length) return;
   el.annRound.textContent = roundNo || state.roundNo;
   el.annSong.textContent = state.track ? `${state.track.name} — ${state.track.artist}` : '';
+  // Up to four teams: one big name per line with "vs" between. More than that:
+  // a grid of smaller names that land faster, so ten teams still fit.
+  const many = teams.length > 4;
+  const step = many ? 0.22 : 0.55;
+  el.annRows.className = 'annRows' + (many ? ' many' : '');
+  el.annRows.style.setProperty('--n', teams.length);
   el.annRows.innerHTML = teams.map((t, i) => `
-    ${i ? `<div class="annVs" style="animation-delay:${i * 0.55 - 0.2}s">vs</div>` : ''}
-    <div class="annRow" style="--c:${colorFor(t.slot)};animation-delay:${i * 0.55}s">
+    ${i && !many ? `<div class="annVs" style="animation-delay:${i * step - 0.2}s">vs</div>` : ''}
+    <div class="annRow" style="--c:${colorFor(t.slot)};animation-delay:${i * step}s">
       <span class="annTeam">${escape_(t.name)}</span>
       <span class="annName">${escape_(singers[t.id])}</span>
     </div>`).join('');
   el.announce.hidden = false;
   teams.forEach((t, i) => setTimeout(() => {
     shake(el.announce, 300);
-    confetti([colorFor(t.slot), '#ffffff'], 70);
-  }, i * 550 + 250));
+    confetti([colorFor(t.slot), '#ffffff'], many ? 30 : 70);
+  }, i * step * 1000 + 250));
   clearTimeout(annTimer);
-  annTimer = setTimeout(() => { el.announce.hidden = true; }, 3200 + teams.length * 550);
+  annTimer = setTimeout(() => { el.announce.hidden = true; }, 3200 + teams.length * step * 1000);
 }
 el.announce.addEventListener('click', () => { el.announce.hidden = true; });
 
 /* --- song pick (game master) ------------------------------------------------ */
+// YouTube (and manual) mode searches LRCLIB through our server: free, no quota,
+// and it only lists songs that have synced lyrics. [SPOTIFY] searches Spotify.
 let searchTimer = 0;
+let searchSeq = 0;
+async function findSongs(q) {
+  if (usesSpotify()) return sp.search(clientId, q);                 // [SPOTIFY]
+  const r = await fetch('/api/search?q=' + encodeURIComponent(q)).then((x) => x.json());
+  return (r.items || []).map((t) => ({ id: '', uri: null, name: t.title, artist: t.artist, album: t.album, art: '', durationMs: t.durationMs }));
+}
 el.q.addEventListener('input', () => {
-  if (MANUAL) return;
   clearTimeout(searchTimer);
   const q = el.q.value;
   if (!q.trim()) { el.results.innerHTML = ''; el.searchHint.classList.remove('hide'); return; }
+  const mySeq = ++searchSeq;
   searchTimer = setTimeout(async () => {
     let items = [];
-    try { items = await sp.search(clientId, q); } catch (e) { console.warn(e); }
+    try { items = await findSongs(q); } catch (e) { console.warn(e); }
+    if (mySeq !== searchSeq) return;                                  // a newer search is on its way
     el.searchHint.classList.toggle('hide', items.length > 0);
-    if (!items.length) el.searchHint.textContent = 'Nothing found. Try the artist name too.';
+    if (!items.length) el.searchHint.textContent = MANUAL ? 'Not found. Type "Artist - Title" and hit "Use this title".' : 'Nothing found with synced lyrics. Try the artist name too.';
     el.results.innerHTML = '';
     for (const t of items) {
       const b = document.createElement('button');
       b.className = 'result';
-      b.innerHTML = `<img src="${t.art}" alt=""><span class="grow"><span class="rt">${escape_(t.name)}</span><br><span class="ra">${escape_(t.artist)} · ${mmss(t.durationMs)}</span></span>`;
+      const art = t.art ? `<img src="${t.art}" alt="">` : `<span class="noart">${escape_((t.name || '?')[0])}</span>`;
+      b.innerHTML = `${art}<span class="grow"><span class="rt">${escape_(t.name)}</span><br><span class="ra">${escape_(t.artist)}${t.album ? ' · ' + escape_(t.album) : ''} · ${mmss(t.durationMs)}</span></span>`;
       b.addEventListener('click', () => sendTrack(t));
       el.results.appendChild(b);
     }
-  }, 260);
+  }, usesSpotify() ? 260 : 380);
 });
 
 function sendTrack(track) {
@@ -356,9 +483,22 @@ el.optionCards.addEventListener('click', (e) => {
   if (b) net.send({ t: 'host:choose', idx: Number(b.dataset.idx) });
 });
 for (const b of $$('.diffBtn')) b.addEventListener('click', () => net.send({ t: 'host:different' }));
-el.goBtn.addEventListener('click', () => { sp.unlockAudio(); net.send({ t: 'host:go' }); });
+el.goBtn.addEventListener('click', () => {
+  if (usesSpotify()) sp.unlockAudio();                 // [SPOTIFY]
+  net.send({ t: 'host:go' });
+});
+el.nextVideoBtn.addEventListener('click', () => { el.videoMsg.textContent = ''; net.send({ t: 'host:nextvideo' }); });
+el.pasteForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const url = el.pasteUrl.value.trim();
+  if (!url) return;
+  el.videoMsg.textContent = '';
+  net.send({ t: 'host:video', url });
+  el.pasteUrl.value = '';
+});
 el.reannBtn.addEventListener('click', () => showAnnouncement(state.singers, state.roundNo));
-el.stopBtn.addEventListener('click', () => net.send({ t: 'host:abort' }));
+// "End it here": the music stops at once, not after a round trip to the server.
+el.stopBtn.addEventListener('click', () => { stopMusic(); net.send({ t: 'host:abort' }); });
 el.nextBtn.addEventListener('click', () => net.send({ t: 'host:next' }));
 el.againBtn.addEventListener('click', () => net.send({ t: 'host:restart' }));
 el.newTeamsBtn.addEventListener('click', () => {
@@ -415,6 +555,15 @@ function render() {
 
   if (phase === 'live' && lastPhase !== 'live') startClock();
   if (phase !== 'live' && lastPhase === 'live') stopClock();
+  // Whatever ended the round (the song, "End it here", "Quit to setup"), the music stops.
+  if (!['countdown', 'live'].includes(phase) && ['countdown', 'live'].includes(lastPhase)) stopMusic();
+  // Where the YouTube player sits: a preview while the round is set up, the left
+  // half during the song, parked (hidden) everywhere else.
+  if (usesYT()) {
+    if (view === 'armed') yt.attach(el.ytSlotArmed);
+    else if (phase === 'live' || yt.isLive()) yt.attach(el.ytSlotLive);
+    else yt.attach(null);
+  }
   if (phase !== 'final') lastFinalShown = false;
   lastPhase = phase;
 }
@@ -422,7 +571,10 @@ function render() {
 function renderSetup() {
   el.codeBox.innerHTML = [...state.code].map((c) => `<span class="digit">${c}</span>`).join('');
   el.joinUrl.textContent = location.host;
-  el.teamSlots.innerHTML = Array.from({ length: 4 }, (_, i) => {
+  // Every team that joined, plus one empty slot until the room is full (max 10).
+  const shown = Math.min(maxTeams, Math.max(2, ...state.teams.map((t) => t.slot + 1)) + (state.teams.length < maxTeams ? 1 : 0));
+  el.teamSlots.classList.toggle('many', shown > 4);
+  el.teamSlots.innerHTML = Array.from({ length: shown }, (_, i) => {
     const t = state.teams.find((x) => x.slot === i);
     const c = colorFor(i);
     if (!t) return `<div class="tslot"><span class="label">Team ${i + 1}</span><span class="tn muted">waiting for a phone…</span></div>`;
@@ -437,7 +589,7 @@ function renderSetup() {
     </div>`;
   }).join('');
 
-  const needSpotify = !MANUAL && !sp.isLoggedIn();
+  const needSpotify = usesSpotify() && !sp.isLoggedIn();              // [SPOTIFY]
   const noTeams = state.teams.length === 0;
   el.startBtn.disabled = needSpotify || noTeams;
   el.startHint.textContent = needSpotify ? 'Connect Spotify first (or use manual mode)'
@@ -470,7 +622,7 @@ function renderPick(phase) {
     el.q.value = '';
     el.results.innerHTML = '';
     el.searchHint.classList.remove('hide');
-    el.searchHint.textContent = MANUAL ? 'Type "Artist - Title" and hit "Use this title".' : 'Type a title. Famous choruses work best.';
+    el.searchHint.textContent = MANUAL ? 'Search, or type "Artist - Title" and hit "Use this title".' : 'Type a title or an artist. Only songs with synced lyrics show up.';
     setTimeout(() => el.q.focus(), 50);
   }
 }
@@ -498,7 +650,9 @@ function renderSingers() {
 function renderArmed() {
   const t = state.track || {};
   el.armArt.src = t.art || '';
-  el.armArt.classList.toggle('hide', !t.art);
+  el.armArt.classList.toggle('hide', !t.art || usesYT());
+  el.ytSlotArmed.classList.toggle('hide', !usesYT() || !t.video);
+  el.lineup.classList.toggle('many', state.teams.length > 4);
   el.armTitle.textContent = t.name || '—';
   el.armArtist.textContent = [t.artist, state.song?.year].filter(Boolean).join(' · ') || '—';
   el.armWindow.textContent = `The whole song · ${mmss(state.roundMs)} · ${state.lineCount} lines · sung in ${LANG_NAMES[state.settings.lang] || state.settings.lang}`;
@@ -511,7 +665,11 @@ function renderArmed() {
 
   let hint = 'Hand each team\'s phone to its singer. Hold it close and belt it.';
   let ok = true;
-  if (!MANUAL) {
+  if (usesYT()) {
+    const r = renderVideoBar(t);
+    ok = r.ok;
+    if (r.hint) hint = r.hint;
+  } else if (usesSpotify()) {                              // [SPOTIFY — kept for rollback]
     if (t.resolving) { ok = false; hint = 'Finding it on Spotify…'; }
     else if (!t.uri) { ok = false; hint = 'Could not find this one on Spotify. Try a different song.'; }
     else if (!sp.playerReady()) { ok = false; hint = 'Waiting for the Spotify player…'; }
@@ -523,34 +681,63 @@ function renderArmed() {
   el.armHint.style.color = !ok && !t.resolving ? 'var(--p1)' : '';
 }
 
+/** YouTube: which video will play, and the ways to change it. */
+function renderVideoBar(t) {
+  el.videoBar.classList.remove('hide');
+  el.ytSearchLink.href = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(`${t.artist || ''} ${t.name || ''}`.trim());
+  const v = t.video;
+  const more = (t.videos?.length || 0) > (t.videoIdx || 0) + 1;
+  el.nextVideoBtn.classList.toggle('hide', !more);
+  if (v) {
+    yt.cue(v.id);
+    const off = Math.round((t.offByMs || 0) / 1000);
+    el.videoWhat.innerHTML = `<b>${escape_(v.title)}</b> <span class="muted">· ${escape_(v.channel || 'YouTube')}${v.durationMs ? ' · ' + mmss(v.durationMs) : ''}</span>`
+      + (Math.abs(off) >= 8 ? `<div style="color:var(--p6);margin-top:4px">This video is ${Math.abs(off)} s ${off > 0 ? 'longer' : 'shorter'} than the lyrics. It may be a music-video cut (intro/outro), so the words might not line up. Try the next match.</div>` : '');
+    if (!yt.playerReady()) return { ok: false, hint: 'Loading the YouTube player…' };
+    return { ok: true, hint: '' };
+  }
+  el.videoWhat.innerHTML = '';
+  if (t.resolving) return { ok: false, hint: 'Finding it on YouTube…' };
+  const why = {
+    nokey: 'No YouTube API key on the server, so paste a link: open "Search YouTube", copy the video\'s address and paste it here.',
+    quota: `Today's YouTube searches are used up (they refill at ${new Date(ytStatus?.resetsAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}). Songs played before still work. Paste a link for this one.`,
+    none: 'YouTube found nothing for this one. Paste a link, or pick a different song.',
+    blocked: 'None of the matches can be played here. Paste a link to another upload.',
+    error: 'Could not reach YouTube. Paste a link, or try again.',
+  }[t.videoError] || 'Paste a YouTube link for this song.';
+  if (t.videoError === 'quota' && ytStatus) ytStatus.searchesLeft = 0;
+  return { ok: false, hint: why };
+}
+
+// Teams as a list of horizontal bars. With YouTube it sits on the right of the
+// video; otherwise it takes the whole width. Rows keep their order (by slot)
+// so nobody hunts for their team; the leader glows.
 function renderLive() {
   const t = state.track || {};
   el.liveTitle.textContent = t.name || '—';
-  el.liveArtist.textContent = t.artist || '—';
+  if (!yt.isLive() || state.phase !== 'countdown') el.liveArtist.textContent = t.artist || '—';
   const n = state.teams.length;
-  el.arena.className = 'arena ' + (n <= 1 ? 'solo' : n === 2 ? 'duo' : n === 3 ? 'trio' : 'quad');
+  const withVideo = usesYT() && Boolean(t.video);
+  el.ytSlotLive.classList.toggle('hide', !withVideo);
+  el.liveGrid.classList.toggle('video', withVideo);
+  el.arena.className = 'arena list' + (n > 6 ? ' dense' : '');
+  el.arena.style.setProperty('--n', Math.max(n, 2));
   const top = Math.max(0, ...state.teams.map((p) => p.percent));
   el.arena.innerHTML = state.teams.map((team) => {
     const c = colorFor(team.slot);
     const lead = team.percent > 0 && team.percent === top;
     return `<div class="lane ${lead ? 'lead' : ''} ${team.connected ? '' : 'dim'}" style="--c:${c}">
-      <div class="fill" style="height:${team.percent}%"></div>
+      <div class="fill" style="width:${team.percent}%"></div>
       <div class="laneTop">
-        <div class="row" style="gap:8px;align-items:center">
+        <div class="row" style="gap:8px;align-items:center;flex-wrap:nowrap">
           <span class="dot ${team.micOk ? 'on' : ''}"></span>
-          <span class="label" style="color:${c}">${escape_(team.name)} · ${team.points} pts</span>
+          <span class="label lteam" style="color:${c}">${escape_(team.name)} · ${team.points} pts</span>
         </div>
         <div class="pname">${escape_(state.singers[team.id] || team.name)}</div>
       </div>
       <div class="ppct">${team.percent}<span style="font-size:.45em">%</span></div>
     </div>`;
   }).join('');
-  if (n === 2) {
-    const vs = document.createElement('div');
-    vs.className = 'vs';
-    vs.textContent = 'VS';
-    el.arena.appendChild(vs);
-  }
 }
 
 let clockRaf = 0;
@@ -571,11 +758,11 @@ function stopClock() { cancelAnimationFrame(clockRaf); clockRaf = 0; }
 let clockSkew = 0;
 setInterval(() => { if (state?.serverNow) clockSkew = state.serverNow - Date.now(); }, 2000);
 
-const ORD = ['1st', '2nd', '3rd', '4th'];
 function renderReveal() {
   const r = state.result;
   if (!r) return;
   el.nextBtn.textContent = r.last ? 'Final results' : 'Next round';
+  el.revRows.classList.toggle('compact', r.rows.length > 4);
   const win = r.rows.find((x) => x.id === r.winnerId);
   if (r.roundNo !== lastRevealRound) {
     lastRevealRound = r.roundNo;
@@ -594,7 +781,7 @@ function renderReveal() {
     const pts = teamById(row.id)?.points ?? 0;
     return `<div class="panel" style="padding:12px 16px;border-color:${row.id === r.winnerId ? c : 'var(--line)'}">
       <div class="row" style="gap:14px;align-items:baseline">
-        <span class="label" style="min-width:3ch">${ORD[place] || ''}</span>
+        <span class="label" style="min-width:3.4ch">${ordinal(place + 1)}</span>
         <span class="d3" style="color:${c};min-width:4.2ch">${row.percent}%</span>
         <span class="grow" style="font-weight:700;font-size:18px">${escape_(row.name)} <span class="muted" style="font-weight:500">· ${escape_(row.singer)}</span></span>
         <span class="label">${row.hits}/${row.total} words</span>
@@ -622,7 +809,7 @@ function renderFinal() {
   el.standings.innerHTML = ranked.map((t, i) => {
     if (i && t.points !== ranked[i - 1].points) place = i;
     return `<div class="stRow" style="--c:${colorFor(t.slot)}">
-      <span class="label">${ORD[place]}</span>
+      <span class="label">${ordinal(place + 1)}</span>
       <span class="grow stName">${escape_(t.name)}</span>
       <span class="d3">${t.points}</span>
     </div>`;

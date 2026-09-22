@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// SYNG — room state machine. One host (the laptop), up to four teams. Each team
+// SYNG — room state machine. One host (the laptop), up to ten teams. Each team
 // is one phone with a list of members; one member per team sings each round.
 //
 //   setup ─start─▶ choosing (random mode: a team picks 1 of 3 songs on its phone)
@@ -19,7 +19,7 @@ import { detectLanguage } from './lang.js';
 import { pool } from './songs.js';
 
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';   // no O/0, no I/1
-export const MAX_TEAMS = 4;
+export const MAX_TEAMS = 10;
 export const MAX_MEMBERS = 30;
 export const MAX_ROUNDS = 30;
 const COUNTDOWN_MS = 3400;
@@ -28,6 +28,12 @@ const IDLE_ROOM_MS = 1000 * 60 * 120;
 const MAX_ROUND_MS = 1000 * 60 * 12;
 const FALLBACK_ROUND_MS = 1000 * 60 * 3;
 const OPTIONS = 3;
+const CLIP_MIN_MS = 15000;           // phones record self-contained clips this long…
+const GROQ_PER_MINUTE = 18;          // …or longer, so all phones together stay under Groq's 20/min
+
+// Where the music comes from. 'youtube' is the default; 'spotify' is kept for
+// rollback (see README → "Revert to Spotify"); 'manual' = the host plays it.
+export const MUSIC_SOURCES = ['youtube', 'spotify', 'manual'];
 
 const LANG_BCP47 = { en: 'en-US', es: 'es-ES', pt: 'pt-BR', fr: 'fr-FR', it: 'it-IT', de: 'de-DE' };
 
@@ -50,6 +56,7 @@ export function createRoom() {
     touchedAt: now(),
     phase: 'setup',
     hostSocket: null,
+    music: 'youtube',
     teams: new Map(),
     settings: { mode: 'random', rounds: 5, langs: ['en'], lang: 'en-US' },
     roundNo: 0,
@@ -58,7 +65,7 @@ export function createRoom() {
     optionsError: null,
     optionsToken: 0,
     song: null,             // random mode: the chosen jukebox entry
-    track: null,            // what the host plays: { name, artist, uri, art, durationMs }
+    track: null,            // what the host plays: { name, artist, art, durationMs, video, videos, uri (Spotify) }
     lyrics: null,
     roundMs: 0,
     singers: {},            // teamId -> member name
@@ -244,7 +251,8 @@ export function chooseOption(room, idx) {
   room.song = { id: opt.id, title: opt.title, artist: opt.artist, year: opt.year, lang: opt.lang };
   room.track = {
     id: opt.id, uri: null, name: opt.title, artist: opt.artist, album: '', art: '',
-    durationMs: opt.durationMs || 0, resolving: true,
+    durationMs: opt.durationMs || 0, resolving: room.music !== 'manual',
+    video: null, videos: [], videoIdx: 0, videoError: null,
   };
   armWithLyrics(room, opt._lyrics, LANG_BCP47[opt.lang]);
   room.options = null;
@@ -254,6 +262,7 @@ export function chooseOption(room, idx) {
 /** Game master picked a track from search: go find its lyrics. */
 export async function armTrack(room, track) {
   if (room.phase !== 'pick' && room.phase !== 'loading') return { ok: false, reason: 'wrong-phase' };
+  Object.assign(track, { video: null, videos: [], videoIdx: 0, videoError: null, resolving: room.music === 'youtube' });
   room.track = track;
   room.lyrics = null;
   room.phase = 'loading';
@@ -286,7 +295,7 @@ function setRuntime(room, ms) {
   room.roundMs = ms > 0 ? Math.min(MAX_ROUND_MS, ms) : FALLBACK_ROUND_MS;
 }
 
-/** The host found the chosen song on Spotify (random mode). */
+/** [SPOTIFY — kept for rollback] The host found the chosen song on Spotify (random mode). */
 export function setMedia(room, { uri, art, durationMs }) {
   if (!room.track) return;
   room.track.resolving = false;
@@ -298,6 +307,42 @@ export function setMedia(room, { uri, art, durationMs }) {
     room.track.durationMs = d;
     setRuntime(room, d);
   }
+}
+
+/* --- YouTube ------------------------------------------------------------- */
+
+/** The server found (or was handed) the videos for this track. */
+export function setVideos(room, videos, error = null) {
+  const t = room.track;
+  if (!t) return;
+  t.resolving = false;
+  t.videos = Array.isArray(videos) ? videos.slice(0, 8) : [];
+  t.videoError = t.videos.length ? null : (error || 'none');
+  t.videoIdx = 0;
+  useVideo(room, 0);
+}
+
+/** Switch to candidate i ("Wrong video? Next one"). Returns false when there are no more. */
+export function useVideo(room, i) {
+  const t = room.track;
+  if (!t) return false;
+  const v = t.videos?.[i];
+  if (!v) {
+    t.video = null;
+    if (t.videos?.length) t.videoError = 'blocked';
+    return false;
+  }
+  t.videoIdx = i;
+  t.video = v;
+  t.videoError = null;
+  if (v.thumb) t.art = v.thumb;
+  // The round lasts as long as the video. The lyric sheet's length is only a
+  // fallback when the video's length is not known yet (a pasted link).
+  const lyricMs = room.lyrics?.durationMs || 0;
+  t.durationMs = v.durationMs || lyricMs;
+  t.offByMs = v.durationMs && lyricMs ? v.durationMs - lyricMs : 0;
+  setRuntime(room, t.durationMs);
+  return true;
 }
 
 /** Pick a member who has not sung yet this cycle; everyone gets a turn. */
@@ -331,6 +376,7 @@ export function suggestSingers(room) {
 
 export function beginCountdown(room) {
   if (room.phase !== 'armed' || !room.lyrics || room.teams.size < 1) return false;
+  if (room.music === 'youtube' && !room.track?.video) return false;
   clearTimers(room);
   room.lastResult = null;
   for (const t of room.teams.values()) {
@@ -360,8 +406,14 @@ export function beginCountdown(room) {
 }
 
 /** Host reported real playback: lock the round to the audio and run to the end. */
-export function lockWindow(room, positionMs, onEnd) {
+export function lockWindow(room, positionMs, onEnd, durationMs = 0) {
   if (room.phase !== 'countdown' && room.phase !== 'live') return;
+  // A pasted YouTube link has no known length until the player loads it.
+  if (durationMs > 0 && room.track && !room.track.video?.durationMs && room.music === 'youtube') {
+    room.track.durationMs = durationMs;
+    if (room.track.video) room.track.video.durationMs = durationMs;
+    setRuntime(room, durationMs);
+  }
   const from = Number.isFinite(positionMs) && positionMs > 0 ? positionMs : 0;
   const remaining = Math.max(10000, room.roundMs - from);
   room.round.fromMs = from;
@@ -370,8 +422,29 @@ export function lockWindow(room, positionMs, onEnd) {
   room.round.startedAt = now();
   room.round.endsAt = now() + remaining;
   room.phase = 'live';
+  room.onEnd = onEnd;
   clearTimers(room);
-  later(room, remaining, () => onEnd(room));
+  room.endTimer = setTimeout(() => onEnd(room), remaining);
+  room.timers.push(room.endTimer);
+}
+
+/**
+ * The host reports where the video really is every few seconds. If it
+ * buffered or stalled, slide the round's clock so the lyrics keep lining up
+ * with the audio and the round still ends when the song does.
+ */
+export function resync(room, positionMs) {
+  if (room.phase !== 'live' || !room.round?.startedAt || !Number.isFinite(positionMs)) return false;
+  const drift = playhead(room) - positionMs;          // + = our clock is ahead of the audio
+  if (Math.abs(drift) < 350) return false;
+  room.round.startedAt += drift;
+  const remaining = Math.max(1000, room.round.fromMs + room.roundMs - positionMs);
+  room.round.endsAt = now() + remaining;
+  if (room.endTimer) clearTimeout(room.endTimer);
+  const onEnd = room.onEnd;
+  room.endTimer = setTimeout(() => onEnd?.(room), remaining);
+  room.timers.push(room.endTimer);
+  return true;
 }
 
 const playhead = (room) => room.round.fromMs + (now() - room.round.startedAt);
@@ -507,6 +580,8 @@ export function snapshot(room) {
   return {
     code: room.code,
     phase: room.phase,
+    music: room.music,
+    clipMs: clipMsFor(teams.length),
     settings: { mode: room.settings.mode, rounds: room.settings.rounds, langs: room.settings.langs, lang: room.settings.lang },
     roundNo: room.roundNo,
     chooserId: room.chooserId,
@@ -541,6 +616,17 @@ export function snapshot(room) {
 }
 
 export const COUNTDOWN = COUNTDOWN_MS;
+
+/**
+ * Groq's free tier allows 20 transcriptions a minute for the whole server. Four
+ * phones at 15 s clips is 16/min; ten phones need ~34 s clips to stay under.
+ * Longer clips are also a little MORE accurate (more context for Whisper), the
+ * price is that the live percentage moves in bigger steps.
+ */
+export function clipMsFor(n) {
+  const need = Math.ceil((60 * Math.max(1, n)) / GROQ_PER_MINUTE) * 1000;
+  return Math.max(CLIP_MIN_MS, need);
+}
 
 function shuffle(a) {
   const arr = [...a];

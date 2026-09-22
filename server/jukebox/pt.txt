@@ -1,0 +1,147 @@
+# Português. Format: Artist | Title | Year
+Michel Teló | Ai Se Eu Te Pego | 2011
+Anitta | Show das Poderosas | 2013
+Anitta | Envolver | 2021
+Anitta | Vai Malandra | 2017
+Anitta | Bang | 2015
+Anitta | Downtown | 2017
+Anitta | Movimento da Sanfoninha | 2023
+Jorge Ben Jor | Mas Que Nada | 1963
+Jorge Ben Jor | País Tropical | 1969
+Jorge Ben Jor | Taj Mahal | 1972
+Tim Maia | Descobridor dos Sete Mares | 1983
+Tim Maia | Gostava Tanto de Você | 1973
+Tim Maia | Do Leme ao Pontal | 1986
+Tim Maia | Primavera | 1970
+Tim Maia | Azul da Cor do Mar | 1970
+Gusttavo Lima | Balada | 2011
+Gusttavo Lima | Café e Amor | 2020
+Marília Mendonça | Infiel | 2016
+Marília Mendonça | Supera | 2019
+Marília Mendonça | Todo Mundo Vai Sofrer | 2019
+Marília Mendonça & Maiara & Maraisa | Esqueça-Me Se For Capaz | 2021
+Henrique & Juliano | Liberdade Provisória | 2020
+Jorge & Mateus | Propaganda | 2018
+Zé Neto & Cristiano | Largado às Traças | 2018
+Luan Santana | Meteoro | 2009
+Luan Santana | Acordando o Prédio | 2016
+Wesley Safadão | Camarote | 2014
+Legião Urbana | Tempo Perdido | 1986
+Legião Urbana | Pais e Filhos | 1989
+Legião Urbana | Faroeste Caboclo | 1987
+Legião Urbana | Eduardo e Mônica | 1986
+Legião Urbana | Será | 1985
+Legião Urbana | Índios | 1986
+Legião Urbana | Há Tempos | 1989
+Caetano Veloso | Sozinho | 1998
+Caetano Veloso | Leãozinho | 1977
+Caetano Veloso | Sampa | 1978
+Caetano Veloso | Você É Linda | 1983
+Gilberto Gil | Aquele Abraço | 1969
+Gilberto Gil | Andar com Fé | 1982
+Gilberto Gil | Toda Menina Baiana | 1979
+Chico Buarque | Construção | 1971
+Chico Buarque | A Banda | 1966
+Tom Jobim | Águas de Março | 1972
+Astrud Gilberto & João Gilberto | Garota de Ipanema | 1964
+João Gilberto | Chega de Saudade | 1959
+Vinicius de Moraes | Tarde em Itapoã | 1971
+Elis Regina | Como Nossos Pais | 1976
+Elis Regina | O Bêbado e a Equilibrista | 1979
+Milton Nascimento | Maria Maria | 1978
+Roberto Carlos | Detalhes | 1971
+Roberto Carlos | Como É Grande o Meu Amor por Você | 1967
+Roberto Carlos | Emoções | 1981
+Roberto Carlos | Amigo | 1977
+Djavan | Oceano | 1989
+Djavan | Flor de Lis | 1976
+Djavan | Sina | 1982
+Djavan | Samurai | 1982
+Seu Jorge | Burguesinha | 2007
+Seu Jorge | Amiga da Minha Mulher | 2007
+Kaoma | Lambada | 1989
+Ivete Sangalo | Sorte Grande | 2003
+Ivete Sangalo | Festa | 2001
+Ivete Sangalo | Tempo de Alegria | 2003
+Claudia Leitte | Largadinho | 2011
+Banda Eva | Beleza Rara | 1996
+É o Tchan! | Na Boquinha da Garrafa | 1995
+Daniela Mercury | O Canto da Cidade | 1992
+Skank | Garota Nacional | 1996
+Skank | Vou Deixar | 2003
+Skank | Sutilmente | 2008
+Marisa Monte | Amor I Love You | 2000
+Marisa Monte | Ainda Bem | 2011
+Tribalistas | Já Sei Namorar | 2002
+Tribalistas | Velha Infância | 2002
+Charlie Brown Jr. | Só os Loucos Sabem | 2009
+Charlie Brown Jr. | Céu Azul | 2009
+Charlie Brown Jr. | Dias de Luta, Dias de Glória | 2005
+Capital Inicial | Primeiros Erros | 2000
+Titãs | Epitáfio | 2001
+Titãs | Sonífera Ilha | 1984
+Os Paralamas do Sucesso | Meu Erro | 1984
+Os Paralamas do Sucesso | Lanterna dos Afogados | 1989
+Barão Vermelho | Pro Dia Nascer Feliz | 1983
+Cazuza | Exagerado | 1985
+Cazuza | O Tempo Não Para | 1988
+Kid Abelha | Como Eu Quero | 1984
+Kid Abelha | Fixação | 1984
+Lulu Santos | Como uma Onda | 1983
+Lulu Santos | Tempos Modernos | 1982
+Lulu Santos | Toda Forma de Amor | 1988
+Rita Lee | Mania de Você | 1979
+Rita Lee | Lança Perfume | 1980
+Jota Quest | Na Moral | 2005
+Jota Quest | Dias Melhores | 2000
+Jota Quest | Fácil | 2000
+O Rappa | Pescador de Ilusões | 1999
+O Rappa | Anjos (Pra Quem Tem Fé) | 2003
+Los Hermanos | Anna Júlia | 1999
+Natiruts | Quero Ser Feliz Também | 2000
+Armandinho | Outra Vida | 2006
+Vanessa da Mata | Boa Sorte / Good Luck | 2007
+Vanessa da Mata | Ai Ai Ai | 2004
+Ana Carolina | Quem de Nós Dois | 2001
+Jorge Vercillo | Monalisa | 2002
+Zeca Pagodinho | Deixa a Vida Me Levar | 2002
+Alcione | Não Deixe o Samba Morrer | 1975
+Beth Carvalho | Coisinha do Pai | 1979
+Exaltasamba | Tá Vendo Aquela Lua | 2009
+Thiaguinho | Buquê de Flores | 2012
+Péricles | Até Que Durou | 2012
+Sorriso Maroto | Assim Você Mata o Papai | 2012
+Tiago Iorc | Amei Te Ver | 2016
+Vitor Kley | O Sol | 2017
+Melim | Meu Abrigo | 2017
+Ludmilla | Cheguei | 2016
+Pabllo Vittar | K.O. | 2017
+Luísa Sonza | Chico | 2023
+MC Kevinho | Olha a Explosão | 2016
+Gloria Groove | A Queda | 2021
+Matuê | Kenny G | 2020
+Xutos & Pontapés | Não Sou o Único | 1987
+Xutos & Pontapés | À Minha Maneira | 1988
+GNR | Dunas | 1985
+Rui Veloso | Chico Fininho | 1980
+Rui Veloso | Porto Sentido | 1986
+Rui Veloso | Não Há Estrelas no Céu | 1990
+Delfins | Sou Como Um Rio | 1993
+Ornatos Violeta | Ouvi Dizer | 1999
+The Gift | Fácil de Entender | 2004
+Amália Rodrigues | Barco Negro | 1955
+Amália Rodrigues | Uma Casa Portuguesa | 1953
+Madredeus | O Pastor | 1990
+Mariza | Ó Gente da Minha Terra | 2001
+Ana Moura | Desfado | 2012
+Salvador Sobral | Amar pelos Dois | 2017
+António Variações | Canção de Engate | 1984
+Diogo Piçarra | Tu e Eu | 2015
+David Carreira | Primeira Dama | 2014
+Carolina Deslandes | A Vida Toda | 2018
+Bárbara Tinoco | Antes Dela Dizer Que Sim | 2021
+Buraka Som Sistema | Kalemba (Wegue Wegue) | 2008
+Calema | Onde Anda | 2017
+Anselmo Ralph | Não Me Toca | 2012
+C4 Pedro | Vamos Ficar Por Aqui | 2016
+Nelson Freitas | Miúda Linda | 2013

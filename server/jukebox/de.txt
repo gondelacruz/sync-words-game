@@ -1,0 +1,157 @@
+# Deutsch. Format: Artist | Title | Year
+Nena | 99 Luftballons | 1983
+Nena | Irgendwie, irgendwo, irgendwann | 1984
+Nena | Nur geträumt | 1982
+Rammstein | Du hast | 1997
+Rammstein | Sonne | 2001
+Rammstein | Engel | 1997
+Rammstein | Ich will | 2001
+Rammstein | Deutschland | 2019
+Rammstein | Mein Herz brennt | 2001
+Rammstein | Amerika | 2004
+Rammstein | Links 2 3 4 | 2001
+Helene Fischer | Atemlos durch die Nacht | 2013
+Helene Fischer | Herzbeben | 2013
+Helene Fischer | Achterbahn | 2017
+Falco | Der Kommissar | 1982
+Falco | Jeanny | 1985
+Falco | Vienna Calling | 1985
+Peter Fox | Haus am See | 2008
+Peter Fox | Alles neu | 2008
+Peter Fox | Zukunft Pink | 2022
+Andreas Bourani | Auf uns | 2014
+Andreas Bourani | Nur in meinem Kopf | 2011
+Tim Bendzko | Nur noch kurz die Welt retten | 2011
+Tim Bendzko | Keine Maschine | 2016
+Die Toten Hosen | Tage wie diese | 2012
+Die Toten Hosen | Hier kommt Alex | 1988
+Die Toten Hosen | Zehn kleine Jägermeister | 1996
+Die Ärzte | Schrei nach Liebe | 1993
+Die Ärzte | Männer sind Schweine | 1998
+Die Ärzte | Junge | 2007
+Die Ärzte | Westerland | 1988
+Die Ärzte | Zu spät | 1984
+Wolfgang Petry | Wahnsinn | 1983
+Wolfgang Petry | Verlieben, verloren, vergessen, verzeih'n | 1996
+Herbert Grönemeyer | Männer | 1984
+Herbert Grönemeyer | Mensch | 2002
+Herbert Grönemeyer | Bochum | 1984
+Herbert Grönemeyer | Der Weg | 2002
+Mark Forster | Chöre | 2016
+Mark Forster | Au Revoir | 2014
+Mark Forster | Wie früher | 2014
+Mark Forster | 194 Länder | 2018
+Cro | Easy | 2011
+Cro | Einmal um die Welt | 2012
+Cro | Bye Bye | 2015
+Silbermond | Das Beste | 2006
+Silbermond | Symphonie | 2004
+Silbermond | Leichtes Gepäck | 2015
+Juli | Perfekte Welle | 2004
+Juli | Geile Zeit | 2004
+Wir sind Helden | Denkmal | 2004
+Wir sind Helden | Nur ein Wort | 2005
+Revolverheld | Halt dich an mir fest | 2005
+Revolverheld | Ich lass für dich das Licht an | 2013
+Max Giesinger | 80 Millionen | 2016
+Max Giesinger | Wenn sie tanzt | 2016
+Philipp Poisel | Wie soll ein Mensch das ertragen | 2008
+Clueso | Gewinner | 2009
+Udo Lindenberg | Cello | 1973
+Udo Lindenberg | Horizont | 1987
+Udo Lindenberg & Apache 207 | Komet | 2023
+Apache 207 | Roller | 2019
+Apache 207 | Bläulich | 2020
+Udo Jürgens | Griechischer Wein | 1974
+Udo Jürgens | Aber bitte mit Sahne | 1976
+Udo Jürgens | Merci, Chérie | 1966
+Udo Jürgens | Ich war noch niemals in New York | 1982
+Udo Jürgens | Mit 66 Jahren | 1977
+DJ Ötzi | Ein Stern (... der deinen Namen trägt) | 2007
+DJ Ötzi | Hey Baby | 2000
+Wolfgang Ambros | Schifoan | 1976
+STS | Fürstenfeld | 1984
+Rainhard Fendrich | Macho Macho | 1988
+Rainhard Fendrich | I Am from Austria | 1990
+EAV | Ba-Ba-Banküberfall | 1985
+Münchener Freiheit | Ohne dich (schlaf' ich heut' Nacht nicht ein) | 1985
+Spider Murphy Gang | Skandal im Sperrbezirk | 1981
+Peter Maffay | Es war Sommer | 1976
+Karat | Über sieben Brücken musst du gehn | 1978
+Puhdys | Alt wie ein Baum | 1976
+City | Am Fenster | 1978
+Karel Gott | Biene Maja | 1976
+Roland Kaiser | Santa Maria | 1980
+Roland Kaiser | Joana | 1984
+Howard Carpendale | Ti amo | 1977
+Howard Carpendale | Hello Again | 1984
+Andrea Berg | Du hast mich tausendmal belogen | 2001
+Matthias Reim | Verdammt, ich lieb' dich | 1990
+Drafi Deutscher | Marmor, Stein und Eisen bricht | 1965
+Heino | Blau blüht der Enzian | 1972
+Michael Holm | Mendocino | 1969
+Jürgen Drews | Ein Bett im Kornfeld | 1976
+Juliane Werding | Am Tag, als Conny Kramer starb | 1972
+Marianne Rosenberg | Er gehört zu mir | 1975
+Nicole | Ein bißchen Frieden | 1982
+Trio | Da Da Da | 1982
+Extrabreit | Hurra, hurra, die Schule brennt | 1982
+Ideal | Berlin | 1980
+Hubert Kah | Sternenhimmel | 1982
+Markus | Ich will Spaß | 1982
+Geier Sturzflug | Bruttosozialprodukt | 1983
+Fettes Brot | Jein | 1996
+Fettes Brot | Emanuela | 2005
+Die Fantastischen Vier | Die da!?! | 1992
+Die Fantastischen Vier | MfG | 1999
+Sportfreunde Stiller | '54, '74, '90, 2006 | 2006
+Sportfreunde Stiller | Ein Kompliment | 2002
+Unheilig | Geboren um zu leben | 2010
+Xavier Naidoo | Dieser Weg | 2005
+Söhne Mannheims | Und wenn ein Lied | 2000
+Sarah Connor | Wie schön du bist | 2015
+Sarah Connor | Vincent | 2019
+Lena | Satellite | 2010
+Glasperlenspiel | Geiles Leben | 2015
+Namika | Lieblingsmensch | 2015
+Adel Tawil | Ist da jemand | 2017
+Ich + Ich | Vom selben Stern | 2007
+Ich + Ich | So soll es bleiben | 2008
+Rosenstolz | Liebe ist alles | 2004
+Pur | Abenteuerland | 1995
+Tokio Hotel | Durch den Monsun | 2005
+Tokio Hotel | Schrei | 2005
+Kraftklub | Songs für Liam | 2012
+AnnenMayKantereit | Pocahontas | 2016
+Wincent Weiss | Musik sein | 2016
+Johannes Oerding | Kreise | 2017
+Nina Chuba | Wildberry Lillet | 2022
+Ski Aggu | Friesenjung | 2023
+Jan Delay | Oh Jonny | 2009
+Seeed | Dickes B | 2001
+Seeed | Ding | 2005
+Seeed | Augenbling | 2012
+Kontra K | Erfolg ist kein Glück | 2019
+Capital Bra | Cherry Lady | 2019
+Loredana | Sonnenbrille | 2018
+Bushido | Sonnenbank Flavour | 2006
+Sido | Astronaut | 2015
+Nena | Leuchtturm | 1983
+Truck Stop | Der wilde, wilde Westen | 1977
+Mickie Krause | Schatzi schenk mir ein Foto | 2008
+Tim Toupet | So ein schöner Tag (Fliegerlied) | 2010
+Höhner | Viva Colonia | 2003
+Brings | Superjeilezick | 2001
+Kasalla | Pirate | 2013
+Wolfgang Petry | Weiß der Geier | 1996
+Vanessa Mai | Ich sterb für dich | 2016
+Beatrice Egli | Mein Herz | 2013
+Andreas Gabalier | Hulapalu | 2015
+Andreas Gabalier | I sing a Liad für di | 2011
+Voxxclub | Rock mi | 2014
+Nockis | Ein Engel | 2015
+Die Prinzen | Alles nur geklaut | 1993
+Die Prinzen | Millionär | 1987
+Element of Crime | Delmenhorst | 2005
+Tocotronic | Let There Be Rock | 1995
+Blümchen | Herz an Herz | 1995

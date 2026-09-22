@@ -162,3 +162,43 @@ export function targetSoFar(timeline, ms) {
   return idx < 0 ? [] : all.slice(0, upTo[idx]);
 }
 
+
+/* --- song search for the game master (free, no key) -------------------------- */
+
+const searchCache = new Map();
+
+/**
+ * Free-text song search against LRCLIB. Only songs that HAVE time-synced lyrics
+ * come back, so anything the host clicks is playable. Duplicates (the same song
+ * on five albums) collapse into one row with the most typical length.
+ */
+export async function searchSongs(q) {
+  const query = String(q || '').replace(/\s+/g, ' ').trim().slice(0, 120);
+  if (query.length < 2) return [];
+  if (process.env.SYNC_LYRICS_FIXTURE) {
+    return [
+      { title: 'Bohemian Rhapsody', artist: 'Queen', album: 'A Night at the Opera', durationMs: 14000 },
+      { title: query, artist: 'Test Artist', album: '', durationMs: 14000 },
+    ];
+  }
+  const k = query.toLowerCase();
+  const hit = searchCache.get(k);
+  if (hit && Date.now() - hit.at < TTL) return hit.value;
+
+  const results = (await get('/search', { q: query })) || [];
+  const groups = new Map();
+  for (const r of results) {
+    if (!r.syncedLyrics || r.instrumental) continue;
+    const g = `${simplify(r.artistName)}|${simplify(r.trackName)}`;
+    if (!groups.has(g)) groups.set(g, []);
+    groups.get(g).push(r);
+  }
+  const value = [...groups.values()].slice(0, 12).map((rows) => {
+    rows.sort((a, b) => (a.duration || 0) - (b.duration || 0));
+    const r = rows[Math.floor((rows.length - 1) / 2)];
+    return { title: r.trackName, artist: r.artistName, album: r.albumName || '', durationMs: Math.round((r.duration || 0) * 1000) };
+  });
+  searchCache.set(k, { at: Date.now(), value });
+  if (searchCache.size > 500) searchCache.delete(searchCache.keys().next().value);
+  return value;
+}

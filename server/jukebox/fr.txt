@@ -1,0 +1,184 @@
+# Français. Format: Artist | Title | Year
+Stromae | Alors on danse | 2009
+Stromae | Papaoutai | 2013
+Stromae | Formidable | 2013
+Stromae | Tous les mêmes | 2013
+Stromae | Santé | 2021
+Stromae | L'enfer | 2022
+Stromae | Ta fête | 2013
+Édith Piaf | La Vie en rose | 1947
+Édith Piaf | Non, je ne regrette rien | 1960
+Édith Piaf | Hymne à l'amour | 1950
+Édith Piaf | Padam, padam... | 1951
+Édith Piaf | Milord | 1959
+Indila | Dernière danse | 2013
+Indila | Tourner dans le vide | 2014
+Indila | S.O.S | 2014
+Joe Dassin | Les Champs-Élysées | 1969
+Joe Dassin | L'été indien | 1975
+Joe Dassin | Et si tu n'existais pas | 1975
+Joe Dassin | À toi | 1976
+Zaz | Je veux | 2010
+Zaz | On ira | 2013
+Aya Nakamura | Djadja | 2018
+Aya Nakamura | Pookie | 2019
+Aya Nakamura | Copines | 2018
+Angèle | Balance ton quoi | 2019
+Angèle | Tout oublier | 2018
+Angèle | Bruxelles je t'aime | 2021
+Angèle | La Loi de Murphy | 2018
+Céline Dion | Pour que tu m'aimes encore | 1995
+Céline Dion | S'il suffisait d'aimer | 1998
+Céline Dion | On ne change pas | 1998
+Jacques Brel | Ne me quitte pas | 1959
+Jacques Brel | Amsterdam | 1964
+Jacques Brel | La Valse à mille temps | 1959
+Charles Aznavour | La Bohème | 1965
+Charles Aznavour | Emmenez-moi | 1967
+Charles Aznavour | Hier encore | 1964
+Charles Aznavour | For me formidable | 1963
+Louane | Jour 1 | 2015
+Louane | Avenir | 2015
+Louane | maman | 2025
+Kendji Girac | Andalouse | 2014
+Kendji Girac | Color Gitano | 2014
+Kendji Girac | Tiago | 2018
+Dalida | Paroles, paroles | 1973
+Dalida | Gigi l'amoroso | 1974
+Dalida | Laissez-moi danser | 1979
+Dalida | Bambino | 1956
+Mylène Farmer | Désenchantée | 1991
+Mylène Farmer | Libertine | 1986
+Mylène Farmer | Sans contrefaçon | 1987
+Francis Cabrel | Je l'aime à mourir | 1979
+Francis Cabrel | Petite Marie | 1977
+Francis Cabrel | La Corrida | 1994
+Jean-Jacques Goldman | Je te donne | 1985
+Jean-Jacques Goldman | Quand la musique est bonne | 1982
+Jean-Jacques Goldman | Encore un matin | 1984
+Jean-Jacques Goldman | Envole-moi | 1984
+Jean-Jacques Goldman | Comme toi | 1982
+Jean-Jacques Goldman | Au bout de mes rêves | 1982
+Johnny Hallyday | Allumer le feu | 1998
+Johnny Hallyday | Que je t'aime | 1969
+Johnny Hallyday | L'envie | 1986
+Johnny Hallyday | Requiem pour un fou | 1976
+Michel Sardou | Les lacs du Connemara | 1981
+Michel Sardou | La maladie d'amour | 1973
+Michel Sardou | En chantant | 1978
+Claude François | Alexandrie Alexandra | 1977
+Claude François | Comme d'habitude | 1967
+Claude François | Belles! Belles! Belles! | 1962
+Serge Gainsbourg | La Javanaise | 1963
+Serge Gainsbourg & Jane Birkin | Je t'aime... moi non plus | 1969
+Françoise Hardy | Tous les garçons et les filles | 1962
+France Gall | Ella, elle l'a | 1987
+France Gall | Résiste | 1981
+France Gall | Poupée de cire, poupée de son | 1965
+Michel Berger | La Groupie du pianiste | 1980
+Daniel Balavoine | L'Aziza | 1985
+Daniel Balavoine | Le Chanteur | 1978
+Daniel Balavoine | SOS d'un terrien en détresse | 1978
+Téléphone | Un autre monde | 1984
+Indochine | L'Aventurier | 1982
+Indochine | J'ai demandé à la lune | 2002
+Indochine | 3e sexe | 1985
+Noir Désir | Le vent nous portera | 2001
+Louise Attaque | J't'emmène au vent | 1997
+Les Rita Mitsouko | Marcia Baïla | 1984
+Les Rita Mitsouko | C'est comme ça | 1986
+Niagara | Pendant que les champs brûlent | 1990
+Desireless | Voyage, voyage | 1986
+Émile et Images | Les Démons de minuit | 1986
+Gilbert Montagné | On va s'aimer | 1983
+Patrick Hernandez | Born to Be Alive | 1978
+Vanessa Paradis | Joe le taxi | 1987
+Vanessa Paradis | Be My Baby | 1992
+Patricia Kaas | Mon mec à moi | 1988
+Axelle Red | Sensualité | 1993
+Pascal Obispo | Lucie | 1996
+Garou | Seul | 2000
+Notre-Dame de Paris | Belle | 1998
+Lara Fabian | Je t'aime | 1996
+Hélène Ségara | Il y a trop de gens qui t'aiment | 1999
+Lorie | Près de moi | 2001
+Alizée | Moi... Lolita | 2000
+Alizée | J'en ai marre! | 2003
+Tragédie | Hey Oh | 2003
+Magic System | Premier gaou | 1999
+Magic System | Magic in the Air | 2014
+Yannick Noah | Saga Africa | 1991
+Manau | La Tribu de Dana | 1998
+IAM | Je danse le Mia | 1994
+MC Solaar | Caroline | 1991
+Diam's | La Boulette | 2006
+Sexion d'Assaut | Avant qu'elle parte | 2012
+Maître Gims | Sapés comme jamais | 2015
+Maître Gims | Bella | 2013
+Maître Gims | J'me tire | 2013
+Maître Gims | Est-ce que tu m'aimes ? | 2015
+Gims | Ciel | 2022
+Gims & Vianney | La même | 2018
+Vianney | Je m'en vais | 2016
+Vianney | Pas là | 2015
+Christophe Maé | Il est où le bonheur | 2016
+Christophe Maé | On s'attache | 2007
+Tryo | L'Hymne de nos campagnes | 1998
+Bénabar | Le Dîner | 2005
+Renaud | Mistral gagnant | 1985
+Renaud | Dès que le vent soufflera | 1983
+Alain Souchon | Foule sentimentale | 1993
+Alain Bashung | Osez Joséphine | 1991
+Julien Clerc | Ma préférence | 1978
+Véronique Sanson | Chanson sur ma drôle de vie | 1972
+Michel Polnareff | On ira tous au paradis | 1972
+Michel Fugain | Une belle histoire | 1972
+Joyce Jonathan | Ça ira | 2010
+Amel Bent | Ma philosophie | 2004
+Jenifer | Au soleil | 2002
+Nolwenn Leroy | Juste pour me souvenir | 2009
+Grand Corps Malade | Mais je t'aime | 2020
+Clara Luciani | La grenade | 2018
+Clara Luciani | Le reste | 2021
+Juliette Armanet | Le dernier jour du disco | 2021
+Pomme | Grandiose | 2019
+Soprano | En feu | 2017
+Soprano | Cœur de pirate | 2014
+Soprano | Le Coach | 2016
+Bigflo & Oli | Dommage | 2017
+Orelsan | Basique | 2017
+Orelsan | La terre est ronde | 2011
+Nekfeu | On verra | 2015
+PNL | Au DD | 2019
+Jul | Tchikita | 2016
+Ninho | Jefe | 2021
+Tayc | Le temps | 2020
+Dadju | Reine | 2019
+Slimane | Viens on s'aime | 2016
+Slimane & Vitaa | Ça va ça va | 2019
+Julien Doré | Le lac | 2016
+Calogero | Face à la mer | 2004
+Calogero | Un jour au mauvais endroit | 2014
+Mika | Elle me dit | 2011
+M. Pokora | Tombé | 2016
+Zazie | Je suis un homme | 2007
+Coeur de pirate | Comme des enfants | 2008
+Les Cowboys Fringants | Les étoiles filantes | 2004
+Carla Bruni | Quelqu'un m'a dit | 2002
+Sheila | L'école est finie | 1963
+Sylvie Vartan | La Plus Belle pour aller danser | 1964
+Dave | Vanina | 1974
+Pierre Bachelet | Elle est d'ailleurs | 1980
+Mickey 3D | Respire | 2003
+Superbus | Butterfly | 2006
+Shy'm | Et alors ! | 2012
+Tal | Le sens de la vie | 2012
+Keen'V | J'aimerais trop | 2013
+Vitaa | Confessions nocturnes | 2006
+Marwa Loud | Bad Boy | 2018
+Lous and the Yakuza | Dilemme | 2019
+Ofenbach | Katchi | 2017
+Zaho de Sagazan | La symphonie des éclairs | 2023
+Santa | Popcorn salé | 2024
+Aya Nakamura | Doudou | 2022
+Barbara Pravi | Voilà | 2021

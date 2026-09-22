@@ -7,7 +7,7 @@
 <title>SYNG — host</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ffe600'/><text y='.9em' x='50' text-anchor='middle' font-size='78' font-family='Impact,sans-serif' fill='%2308070c'>S</text></svg>">
 <link rel="stylesheet" href="/style.css">
-<script src="https://sdk.scdn.co/spotify-player.js"></script>
+<!-- The YouTube IFrame API and (only in Spotify mode) the Spotify SDK are loaded by host.js. -->
 </head>
 <body>
 <main class="stage">
@@ -16,7 +16,7 @@
     <div class="brand">SYN<em>G</em></div>
     <div class="row" style="gap:10px">
       <span id="roundChip" class="chip hide">Round 1 / 5</span>
-      <span id="spotifyChip" class="chip">Spotify: offline</span>
+      <span id="musicChip" class="chip">Music</span>
       <span id="teamsChip" class="chip">0 teams</span>
       <button id="quitBtn" class="ghost hide">Quit to setup</button>
     </div>
@@ -34,6 +34,7 @@
 
     <div id="teamSlots" class="teamSlots"></div>
 
+    <!-- [SPOTIFY — kept for rollback] only shown when the music source is Spotify -->
     <div id="needSpotify" class="panel stack center hide" style="padding:clamp(16px,3vmin,32px);gap:12px">
       <div class="d3">Connect Spotify to play the songs</div>
       <p class="muted" style="max-width:56ch;margin:0 auto;font-size:14px;line-height:1.6">
@@ -44,6 +45,8 @@
       <div id="cfgWarn" class="label hide" style="color:var(--p1)">No SPOTIFY_CLIENT_ID on the server — see the README</div>
       <a class="label" href="?manual=1" style="color:var(--mute);text-decoration:underline">or play the songs yourself — manual mode</a>
     </div>
+
+    <div id="ytNote" class="label hide" style="color:var(--mute)"></div>
 
     <div class="panel settings">
       <div class="stack" style="gap:10px">
@@ -127,14 +130,28 @@
   </section>
 
   <!-- ============ ARMED ============ -->
-  <section id="viewArmed" class="stack hide" style="flex:1 1 auto;min-height:0;justify-content:center;gap:clamp(16px,3vmin,36px)">
+  <section id="viewArmed" class="stack hide" style="flex:1 1 auto;min-height:0;justify-content:center;gap:clamp(14px,2.4vmin,30px);overflow:auto">
     <div class="row" style="gap:clamp(16px,3vmin,40px);align-items:center;justify-content:center">
       <img id="armArt" alt="" style="width:clamp(110px,18vmin,240px);height:clamp(110px,18vmin,240px);object-fit:cover;border:2px solid var(--line)">
-      <div class="stack" style="gap:6px">
+      <!-- YouTube preview: the real player is positioned over this box (see #ytWrap) -->
+      <div id="ytSlotArmed" class="ytSlot armedSlot hide"></div>
+      <div class="stack" style="gap:6px;max-width:min(640px,90vw)">
         <div class="label">Round <span class="rNo">1</span> of <span class="rOf">5</span></div>
         <div class="d2" id="armTitle">—</div>
         <div class="d3 muted" id="armArtist">—</div>
         <div class="label acid" id="armWindow">—</div>
+        <div id="videoBar" class="videoBar hide">
+          <div id="videoWhat" class="videoWhat"></div>
+          <div class="row" style="gap:8px">
+            <button id="nextVideoBtn" class="ghost">Wrong video? Next match</button>
+            <a id="ytSearchLink" class="ghost btnlink" target="_blank" rel="noopener">Search YouTube ↗</a>
+          </div>
+          <form id="pasteForm" class="row" style="gap:8px;flex-wrap:nowrap">
+            <input id="pasteUrl" placeholder="…or paste a YouTube link here" autocomplete="off">
+            <button class="ghost" type="submit">Use it</button>
+          </form>
+          <div id="videoMsg" class="label" style="color:var(--p1)"></div>
+        </div>
       </div>
     </div>
     <div id="lineup" class="lineup"></div>
@@ -159,7 +176,11 @@
     <div style="height:8px;background:var(--line);flex:0 0 auto">
       <div id="timeBar" style="height:100%;width:100%;background:var(--acid);transition:width .1s linear"></div>
     </div>
-    <div id="arena" class="arena duo" style="position:relative"></div>
+    <div id="liveGrid" class="liveGrid">
+      <!-- YouTube: the video plays on the left, the teams' percentages on the right -->
+      <div id="ytSlotLive" class="ytSlot liveSlot hide"></div>
+      <div id="arena" class="arena list"></div>
+    </div>
   </section>
 
   <!-- ============ REVEAL ============ -->
@@ -190,6 +211,11 @@
     </div>
   </section>
 </main>
+
+<!-- The one YouTube player. It is moved over whichever .ytSlot is on screen and
+     sits above the scanline effect, because YouTube does not allow anything to
+     be drawn on top of its player. -->
+<div id="ytWrap" class="ytWrap"><div id="ytPlayer"></div></div>
 
 <!-- singer announcement -->
 <div id="announce" class="overlay announce" hidden>

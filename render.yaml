@@ -7,7 +7,10 @@ services:
     startCommand: npm start
     healthCheckPath: /healthz
     envVars:
+      - key: YOUTUBE_API_KEY
+        sync: false           # YouTube Data API v3 key (Google Cloud). Without it the host pastes links.
+      # REVERT TO SPOTIFY: add MUSIC_SOURCE=spotify in Render's Environment tab (see README).
       - key: SPOTIFY_CLIENT_ID
-        sync: false           # prompted for on first deploy, never stored in git
+        sync: false           # only needed if MUSIC_SOURCE=spotify (kept for rollback)
       - key: GROQ_API_KEY
         sync: false           # speech-to-text; add the value in the Render dashboard

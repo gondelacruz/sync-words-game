@@ -3,7 +3,7 @@
 // songs when it is the team's turn, and records whoever is singing.
 // ---------------------------------------------------------------------------
 
-import { $, colorFor, connect, confetti, shake } from '/lib.js';
+import { $, colorFor, connect, confetti, shake, ordinal } from '/lib.js';
 
 const params = new URLSearchParams(location.search);
 const code = (params.get('code') || '').toUpperCase();
@@ -92,11 +92,14 @@ el.memberList.addEventListener('click', (e) => {
 /* --- speech -------------------------------------------------------------- */
 // Two engines:
 //  - 'groq'    (default when the server has a GROQ_API_KEY): the phone records
-//               ~15s clips and uploads them; Whisper on the server transcribes.
+//               15–34 s clips and uploads them; Whisper on the server transcribes.
 //               Longer clips give Whisper more context, so fewer wrong words.
 //  - 'browser' fallback: the browser's own SpeechRecognition.
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+// Clip length comes from the server (state.clipMs): 15 s for up to four teams,
+// longer with more phones so all of them together stay under Groq's 20/min.
 const CLIP_MS = 15000;
+const clipMs = () => Math.max(CLIP_MS, Number(state?.clipMs) || 0);
 let engine = null;
 let sttMode = 'browser';
 let rec = null;
@@ -188,7 +191,7 @@ function recordClip() {
     if (!recording) return;
     try { if (r.state !== 'inactive') r.stop(); } catch {}
     recordClip();
-  }, CLIP_MS);
+  }, clipMs());
 }
 
 async function upload(blob, clipSeq, roundNo, final) {
@@ -346,7 +349,7 @@ function handle(msg) {
     case 'error': {
       const why = {
         'no-room': 'That room is gone.',
-        'room-full': 'That room already has four teams.',
+        'room-full': 'That room is full (ten teams is the limit).',
         'game-running': 'That game has already started. Ask the host to start a new one.',
         kicked: 'The host removed your team.',
       }[msg.reason];
@@ -476,7 +479,7 @@ function startClock() {
 function stopClock() { cancelAnimationFrame(raf); raf = 0; }
 setInterval(() => { if (state?.serverNow) clockSkew = state.serverNow - Date.now(); }, 2000);
 
-const ORD = ['1st', '2nd', '3rd', '4th'];
+const ORD = { get: (i) => ordinal(i + 1) };
 function paintResult() {
   const r = state.result;
   if (!r) return;
@@ -486,7 +489,7 @@ function paintResult() {
   const place = r.rows.findIndex((x) => x.percent === mine.percent && x.phrase === mine.phrase);
   const tied = r.rows.filter((x) => x.percent === mine.percent && x.phrase === mine.phrase).length > 1;
   const won = r.winnerId === me.id;
-  el.resStamp.textContent = won ? 'You take it' : tied && mine.percent > 0 ? `Tied ${ORD[place]}` : mine.percent === 0 ? 'Silence' : ORD[place];
+  el.resStamp.textContent = won ? 'You take it' : tied && mine.percent > 0 ? `Tied ${ORD.get(place)}` : mine.percent === 0 ? 'Silence' : ORD.get(place);
   el.resStamp.style.color = won ? colorFor(me.slot) : 'var(--mute)';
   el.resPct.textContent = mine.percent + '%';
   el.resGain.textContent = `+${mine.gain} point${mine.gain === 1 ? '' : 's'}`;
@@ -504,7 +507,7 @@ function paintFinal() {
   const place = ranked.findIndex((t) => t.points === me.points);
   const tied = ranked.filter((t) => t.points === me.points).length > 1;
   const champ = place === 0 && !tied;
-  el.finStamp.textContent = champ ? 'Champions' : tied ? `Tied ${ORD[place]}` : ORD[place];
+  el.finStamp.textContent = champ ? 'Champions' : tied ? `Tied ${ORD.get(place)}` : ORD.get(place);
   el.finStamp.style.color = champ ? colorFor(me.slot) : 'var(--mute)';
   el.finPts.textContent = `${me.points} points`;
   if (!finalShown) {
