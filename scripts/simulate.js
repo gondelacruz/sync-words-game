@@ -283,6 +283,7 @@ check('host told to play the video from the top', yplay === 0, String(yplay));
 yhost.tx({ t: 'host:playing', positionMs: 40, durationMs: 14000 });
 await wait(150);
 check('YouTube round is live', Y.phase === 'live');
+check('before any transcript, every team shows LISTENING', Y.teams.every((t) => t.listening), Y.teams.map((t) => t.listening).join(','));
 const endsBefore = Y.endsAt;
 await wait(1200);
 yhost.tx({ t: 'host:pos', positionMs: 200 });                    // the video stalled ~1s
@@ -290,6 +291,7 @@ await wait(150);
 check('buffering drift pushes the end of the round back', Y.endsAt - endsBefore > 700, String(Y.endsAt - endsBefore));
 ya.tx({ t: 'team:heard', text: 'is this the real life is this just fantasy' });
 await wait(200);
+check('once a transcript arrives, that team shows its percentage', Y.teams[0].listening === false && Y.teams[1].listening === true);
 yhost.tx({ t: 'host:ended' });
 await wait(300);
 check('video end stops the round', ystop && Y.phase === 'reveal', Y.phase);

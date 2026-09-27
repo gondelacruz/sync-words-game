@@ -735,7 +735,9 @@ function renderLive() {
         </div>
         <div class="pname">${escape_(state.singers[team.id] || team.name)}</div>
       </div>
-      <div class="ppct">${team.percent}<span style="font-size:.45em">%</span></div>
+      ${team.listening
+        ? '<div class="ppct listening">Listening…</div>'
+        : `<div class="ppct">${team.percent}<span style="font-size:.45em">%</span></div>`}
     </div>`;
   }).join('');
 }

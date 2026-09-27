@@ -385,6 +385,7 @@ export function beginCountdown(room) {
     t.inflight = 0;
     t.finalIn = false;
     t.clipSeen = false;
+    t.firstIn = false;            // no transcript back yet this round: screens say LISTENING…
     t.live = blankLive();
     const singer = room.singers[t.id];
     if (singer) {
@@ -462,6 +463,7 @@ export function hearClip(room, team, roundNo, seq, text) {
 
 export function hear(room, team, text) {
   if (!accepting(room)) return false;
+  team.firstIn = true;
   team.heard = String(text || '').slice(0, 30000);
   rescoreAll(room);
   return true;
@@ -605,6 +607,9 @@ export function snapshot(room) {
       micOk: t.micOk,
       engine: t.engine,
       percent: t.live.percent,
+      // True from the start of the song until this phone's first transcript
+      // comes back (with Groq that is one whole clip, 15–34 s).
+      listening: (room.phase === 'live' || room.phase === 'countdown') && !t.firstIn,
       hits: t.live.hits,
       total: t.live.total,
       rank: standings.findIndex((s) => s.id === t.id),

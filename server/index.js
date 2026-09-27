@@ -86,6 +86,7 @@ app.post('/api/transcribe',
     const tiny = !Buffer.isBuffer(req.body) || req.body.length < 200;
     if (final) team.finalIn = true;
     if (tiny) {
+      if (!team.firstIn) { team.firstIn = true; push(room); }
       checkScoringDone(room, onScored);
       return res.json({ ok: true, text: '' });
     }
@@ -102,6 +103,7 @@ app.post('/api/transcribe',
     }
 
     if (text && hearClip(room, team, roundNo, seq, text)) push(room);
+    else if (!team.firstIn && roundNo === room.roundNo) { team.firstIn = true; push(room); }   // answered, just silence
     checkScoringDone(room, onScored);
     res.json({ ok: true, text });
   });

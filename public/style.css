@@ -492,3 +492,15 @@ input::placeholder { color: #4b4660; }
   .annRows.many { grid-template-columns: 1fr; }
 }
 .arena.list .lane .fill { background: linear-gradient(90deg, color-mix(in srgb, var(--c) 30%, transparent), var(--c)); }
+
+/* --- "Listening…" until a phone's first transcript comes back ------------------ */
+.lane .ppct.listening, .arena.list .lane .ppct.listening {
+  font-size: clamp(16px, min(4.2vmin, calc(26vh / var(--n, 2))), 56px);
+  color: var(--c); letter-spacing: .04em; text-transform: uppercase;
+  animation: listen 1.2s ease-in-out infinite;
+}
+.bigmeter .num.listening {
+  font-size: clamp(40px, 13vw, 90px); text-transform: uppercase;
+  animation: listen 1.2s ease-in-out infinite;
+}
+@keyframes listen { 50% { opacity: .35; } }

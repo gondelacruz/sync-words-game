@@ -418,7 +418,9 @@ function render() {
   } else if (phase === 'countdown' || phase === 'live') {
     el.singWho.textContent = singer ? `${singer} — sing!` : 'Sing!';
     el.singHint.textContent = phase === 'countdown' ? 'Get ready…' : 'Keep the phone close to your mouth';
-    paintMeter(me.percent);
+    // Until the first transcript is back, "0" looks broken: say we're listening.
+    if (me.listening) paintListening();
+    else paintMeter(me.percent);
     show('sing');
     startClock();
   } else if (phase === 'scoring') {
@@ -451,7 +453,14 @@ el.chooseList.addEventListener('click', (e) => {
   net.send({ t: 'team:choose', idx: Number(b.dataset.idx) });
 });
 
+function paintListening() {
+  el.meterFill.style.height = '0%';
+  el.meterNum.textContent = 'Listening…';
+  el.meterNum.classList.add('listening');
+}
+
 function paintMeter(percent) {
+  el.meterNum.classList.remove('listening');
   const p = Number(percent) || 0;
   const rose = p > Number(el.meterNum.textContent || 0);
   el.meterFill.style.height = p + '%';
